@@ -44,7 +44,7 @@ import Firebase from '../assets/tech/firebase.png';
 
 // Import Tekisky separately
 import GeeksforGeeks from "../assets/company/geeksforgeeksLogo.png";
-import Younity from "../assets/company/younity.png";
+import Younity from "../assets/company/younityLogo.png";
 
 
 export const navLinks = [
