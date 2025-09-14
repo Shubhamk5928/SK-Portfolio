@@ -39,7 +39,7 @@ import redux from '../assets/tech/redux.png';
 import tailwind from '../assets/tech/tailwind.png';
 import threejs from '../assets/tech/threejs.svg';
 import typescript from '../assets/tech/typescript.png';
-import Redis from '../assets/tech/redis.png';
+import Redis from '../assets/tech/redisLogo.png';
 import Firebase from '../assets/tech/firebase.png';
 
 // Import Tekisky separately
