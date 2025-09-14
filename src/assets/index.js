@@ -13,6 +13,7 @@ import figma from "./tech/figma.png";
 import gearXpert from './gearXpert.png';
 import project3 from './project3.webp';
 import project2 from './proj1.webp'
+import SaveFlex from './SaveFlex.png'
 import mysql from './tech/mysql.png';
 import express from './tech/express.png';
 import aws from './tech/aws.png';
@@ -29,6 +30,9 @@ import threejs from "./tech/threejs.svg";
 import firstTestimonial from './Tars Ken.webp';
 import secondTestimonial from './image.webp';
 import thirdTestimonial from './third testimonial.webp'
+import invisibleBrowser from './invisible-browser-project.png'
+import gfgcontri from './gfg-contibutions.png'
+
 
 export {
   logo,
@@ -43,6 +47,7 @@ export {
   gearXpert,
   project2,
   project3,
+  SaveFlex,
   mysql,
   express,
   aws,
@@ -62,5 +67,6 @@ export {
   redux,
   tailwind,
   threejs,
-
+  invisibleBrowser,
+  gfgcontri,
 };

@@ -6,6 +6,7 @@ import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { styles } from "../styles";
 import { services } from "../constants";
 import { SectionWrapper } from "../hoc";
+import CV from "./CV";
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -71,11 +72,50 @@ const About = () => {
         <h2 className={styles.sectionHeadText}>Overview.</h2>
       </div>
 
-      <p ref={paragraphRef} className="mt-4 text-secondary text-[17px] max-w-3xl leading-[30px]">
-        I'm a skilled software developer with experience in  JavaScript, and expertise in frameworks 
-        like React, Node.js, and Three.js. I'm a quick learner and collaborate closely with clients to create efficient, 
-        scalable, and user-friendly solutions that solve real-world problems. Let's work together to bring your ideas to life!
-      </p>
+      <div className="flex flex-col lg:flex-row gap-8 lg:gap-12 items-start">
+        <div ref={paragraphRef} className="mt-4 text-secondary text-[17px] max-w-3xl leading-[30px] flex-1">
+        <p className="mb-4">
+          👋 Hi there! I'm <span className="font-semibold text-white">Shubham Kumar</span>, a passionate Full-Stack Engineer with <span className="font-semibold">2.5+ years</span> of hands-on experience crafting robust web applications.
+        </p>
+        
+        <div className="mb-4">
+          <span className="font-semibold text-white">🚀 Technical Expertise:</span>
+          <br />
+          • <span className="font-medium">MERN Stack</span> (MongoDB, Express, React, Node.js) 💻
+          <br />
+          • <span className="font-medium">Backend Technologies:</span> Redis, WebSockets, JWT, OAuth 🔧
+          <br />
+          • <span className="font-medium">API Development:</span> RESTful services & scalable architectures 🌐
+        </div>
+
+        <div className="mb-4">
+          <span className="font-semibold text-white">🎯 Current Focus:</span>
+          <br />
+          Developing high-performance web applications powered by <span className="font-medium">AI agents</span> 🤖, solving complex problems while keeping user experience at the forefront ✨
+        </div>
+
+        <div className="mb-4">
+          <span className="font-semibold text-white">💡 What I Bring:</span>
+          <br />
+          • Quick learner with adaptability 📚
+          <br />
+          • Strong collaboration with teams & clients 🤝
+          <br />
+          • Problem-solving mindset 🧩
+          <br />
+          • Focus on scalable, user-friendly solutions 📈
+        </div>
+
+        <p className="font-medium text-white">
+          🎉 Let's work together to bring your ideas to life and build something awesome! 🚀
+        </p>
+        </div>
+
+        {/* CV Component */}
+        <div className="lg:mt-4 flex justify-center lg:justify-start">
+          <CV />
+        </div>
+      </div>
 
       <div className="mt-20 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 justify-items-center gap-10">
         {services.map((service, index) => (
