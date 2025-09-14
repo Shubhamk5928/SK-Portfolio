@@ -43,8 +43,8 @@ import Redis from '../assets/tech/redisLogo.png';
 import Firebase from '../assets/tech/firebase.png';
 
 // Import Tekisky separately
-import GeeksforGeeks from "../assets/company/GeeksforGeeks.png";
-import Younity from "../assets/company/Younity.png";
+import GeeksforGeeks from "../assets/company/geeksforgeeksLogo.png";
+import Younity from "../assets/company/younity.png";
 
 
 export const navLinks = [
