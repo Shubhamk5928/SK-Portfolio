@@ -16,36 +16,35 @@ import {
   SaveFlex,
   invisibleBrowser,
   gfgcontri,
-} from '../assets';
+} from "../assets";
 
 // Import all tech skills from tech folder
-import aws from '../assets/tech/aws.png';
-import css from '../assets/tech/css.png';
-import docker from '../assets/tech/docker.png';
-import express from '../assets/tech/express.png';
-import figma from '../assets/tech/figma.png';
-import framer from '../assets/tech/framer.png';
-import git from '../assets/tech/git.png';
-import gsap from '../assets/tech/gsap.png';
-import html from '../assets/tech/html.png';
-import javascript from '../assets/tech/javascript.png';
-import mongodb from '../assets/tech/mongodb.png';
-import mui from '../assets/tech/mui.png';
-import mysql from '../assets/tech/mysql.png';
-import nodejs from '../assets/tech/nodejs.png';
-import postgresql from '../assets/tech/postgresql.png';
-import reactjs from '../assets/tech/reactjs.png';
-import redux from '../assets/tech/redux.png';
-import tailwind from '../assets/tech/tailwind.png';
-import threejs from '../assets/tech/threejs.svg';
-import typescript from '../assets/tech/typescript.png';
-import Redis from '../assets/tech/redisLogo.png';
-import Firebase from '../assets/tech/firebase.png';
+import aws from "../assets/tech/aws.png";
+import css from "../assets/tech/css.png";
+import docker from "../assets/tech/docker.png";
+import express from "../assets/tech/express.png";
+import figma from "../assets/tech/figma.png";
+import framer from "../assets/tech/framer.png";
+import git from "../assets/tech/git.png";
+import gsap from "../assets/tech/gsap.png";
+import html from "../assets/tech/html.png";
+import javascript from "../assets/tech/javascript.png";
+import mongodb from "../assets/tech/mongodb.png";
+import mui from "../assets/tech/mui.png";
+import mysql from "../assets/tech/mysql.png";
+import nodejs from "../assets/tech/nodejs.png";
+import postgresql from "../assets/tech/postgresql.png";
+import reactjs from "../assets/tech/reactjs.png";
+import redux from "../assets/tech/redux.png";
+import tailwind from "../assets/tech/tailwind.png";
+import threejs from "../assets/tech/threejs.svg";
+import typescript from "../assets/tech/typescript.png";
+import Redis from "../assets/tech/redisLogo.png";
+import Firebase from "../assets/tech/firebase.png";
 
 // Import Tekisky separately
 import GeeksforGeeks from "../assets/company/geeksforgeeksLogo.png";
 import Younity from "../assets/company/younityLogo.png";
-
 
 export const navLinks = [
   {
@@ -91,32 +90,32 @@ const services = [
 
 const technologies = [
   // Backend Development
-  { name: 'Node.js', icon: nodejs },
-  { name: 'Express.js', icon: express },
-  { name: 'MongoDB', icon: mongodb },
-  { name: 'MySQL', icon: mysql },
-  { name: 'PostgreSQL', icon: postgresql },
-  { name: 'TypeScript', icon: typescript },
-  { name: 'JavaScript', icon: javascript },
-  { name: 'Redis', icon: Redis },
-  { name: 'FireBase', icon: Firebase },
+  { name: "Node.js", icon: nodejs },
+  { name: "Express.js", icon: express },
+  { name: "MongoDB", icon: mongodb },
+  { name: "MySQL", icon: mysql },
+  { name: "PostgreSQL", icon: postgresql },
+  { name: "TypeScript", icon: typescript },
+  { name: "JavaScript", icon: javascript },
+  { name: "Redis", icon: Redis },
+  { name: "FireBase", icon: Firebase },
 
   // Deployment & Collaboration
-  { name: 'AWS', icon: aws },
-  { name: 'Docker', icon: docker },
-  { name: 'Git', icon: git },
-  { name: 'Figma', icon: figma },
+  { name: "AWS", icon: aws },
+  { name: "Docker", icon: docker },
+  { name: "Git", icon: git },
+  { name: "Figma", icon: figma },
 
   // Frontend Development
-  { name: 'React.js', icon: reactjs },
-  { name: 'Redux', icon: redux },
-  { name: 'Tailwind CSS', icon: tailwind },
-  { name: 'Material UI', icon: mui },
-  { name: 'Framer Motion', icon: framer },
-  { name: 'GSAP', icon: gsap },
-  { name: 'Three.js', icon: threejs },
-  { name: 'HTML5', icon: html },
-  { name: 'CSS3', icon: css },
+  { name: "React.js", icon: reactjs },
+  { name: "Redux", icon: redux },
+  { name: "Tailwind CSS", icon: tailwind },
+  { name: "Material UI", icon: mui },
+  { name: "Framer Motion", icon: framer },
+  { name: "GSAP", icon: gsap },
+  { name: "Three.js", icon: threejs },
+  { name: "HTML5", icon: html },
+  { name: "CSS3", icon: css },
 ];
 
 const experiences = [
@@ -127,11 +126,11 @@ const experiences = [
     iconBg: "#383E56",
     date: "March 2023 - Present",
     points: [
-      "Developed a responsive and interactive frontend for the GFG Courses platform with over 2000+ daily transactions using React.js.",
+      "Managed user data tracking for the GeeksforGeeks portal, processing 2-3M+ daily entries into GCP BigQuery, leveraging the data to drive content strategy based on user engagement and time spent on topics.",
+      "Migrated a user database of 23M+ users from MySQL to Amazon DynamoDB, boosting scalability, performance, and reducing latency.",
+      "Configured Mautic Open Source Marketing Automation Platform to streamline bulk email campaigns and marketing workflows.",
+      "Engineered an authentication system with JWT and social logins, supporting 23M+ registered users for secure account creation.",
       "Implemented product pages, search filters, shopping cart functionality, and user authentication for a seamless experience.",
-      "Enhanced UI/UX performance, resulting in 30% improved page load times and better interactivity.",
-      "Integrated RESTful APIs for course listings, mentor management, and payment systems in collaboration with backend developers.",
-      "Optimized Redux state management, achieving 25% faster checkout speed.",
       "Built a remuneration portal backend with Node.js and MongoDB, automating freelancer payments and reducing processing time by 30%.",
     ],
   },
@@ -142,9 +141,9 @@ const experiences = [
     iconBg: "#E6DEDD",
     date: "July 2022 - August 2022",
     points: [
-      "Developed a record management system for Younity.in, an Ed-Tech platform with 200,000+ learners, enabling users to input and store data.",
-      "Created backend functionality for record management, allowing users to add and manage their records efficiently.",
-      "Collaborated with the team to ensure seamless integration of frontend and backend components.",
+      "Younity.in – a community-led Ed-Tech platform with 200,000+ learners.",
+      "Developed an in-house marketing automation tool with features like bulk email sending, email scheduling, URL shortening, dynamic mail content, and targeted user segmentation based on multiple factors using AWS Postgres, DynamoDB, Redis, SES, SQS, SNS & Django.",
+      "Currently handling 25-30M+ monthly emails, tracking key metrics such as read percentage, bounce rate, unique opens, and failed deliveries.",
     ],
   },
 ];
@@ -251,7 +250,7 @@ const projects = [
     image: gearXpert, // Update with relevant image
     source_code_link: "https://shubhamk5928.github.io/shub_Fission/",
   },
-   {
+  {
     name: "541+ Articles on GeeksforGeeks",
     description:
       "Authored 541+ articles on GeeksforGeeks, covering diverse programming topics, contributing to the learning community with well-researched and clear content.",
@@ -285,7 +284,7 @@ const projects = [
     image: SaveFlex, // Update with relevant image
     source_code_link: "https://shubhamk5928.github.io/SaveFlex2/",
   },
-  
+
   {
     name: "Raktjeevan: e-Blood Bank",
     description:
@@ -332,7 +331,6 @@ const projects = [
     image: project3, // Update with relevant image
     source_code_link: "https://github.com/shubhamk5928/nirf-analysis",
   },
- 
 ];
 
 export { services, technologies, experiences, testimonials, projects };
