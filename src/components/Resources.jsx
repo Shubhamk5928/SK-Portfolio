@@ -57,8 +57,8 @@ const ResourceCard = ({
           onClick={(e) => {
             e.preventDefault();
             e.stopPropagation();
-            console.log('Card clicked, navigating to:', link);
-            alert('Card clicked! Opening: ' + link);
+            //console.log('Card clicked, navigating to:', link);
+            //alert('Card clicked! Opening: ' + link);
             window.open(link, '_blank');
           }}
           className="w-full h-full hover:opacity-90 transition-opacity duration-200"
