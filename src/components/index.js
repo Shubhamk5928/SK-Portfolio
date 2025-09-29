@@ -9,6 +9,7 @@ import Feedbacks from "./Feedbacks";
 import Contact from "./Contact";
 import CanvasLoader from "./Loader";
 import CV from "./CV";
+import Resources from "./Resources";
 
 
 export {
@@ -22,6 +23,7 @@ export {
   Contact,
   CanvasLoader,
   CV,
+  Resources,
   EarthCanvas, 
   ComputersCanvas, 
   StarsCanvas

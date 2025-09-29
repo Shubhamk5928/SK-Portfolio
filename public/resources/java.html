@@ -1,0 +1,3194 @@
+
+<!DOCTYPE html>
+<html lang="en">
+
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>A Comprehensive Guide to Core Java Concepts</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400;1,600&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
+    <style>
+        :root {
+            --primary: #2c3e50;
+            --secondary: #34495e;
+            --accent: #e74c3c;
+            --muted: #95a5a6;
+            --background: #fefefe;
+            --surface: #f8f9fa;
+        }
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--background);
+            color: var(--primary);
+            line-height: 1.7;
+        }
+        
+        .serif {
+            font-family: 'Playfair Display', serif;
+        }
+        
+        .toc-fixed {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 280px;
+            height: 100vh;
+            background: var(--surface);
+            border-right: 1px solid #e5e7eb;
+            overflow-y: auto;
+            z-index: 1000;
+            padding: 2rem 0;
+        }
+        
+        .main-content {
+            margin-left: 280px;
+            min-height: 100vh;
+        }
+        
+        .hero-section {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .hero-overlay {
+            background: rgba(0,0,0,0.4);
+            position: absolute;
+            inset: 0;
+        }
+        
+        .bento-grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            grid-template-rows: auto auto;
+            gap: 2rem;
+            height: 60vh;
+        }
+        
+        .bento-item {
+            background: rgba(255,255,255,0.1);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255,255,255,0.2);
+            border-radius: 16px;
+            padding: 2rem;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+        
+        .citation-link {
+            color: var(--accent);
+            text-decoration: none;
+            font-weight: 500;
+            border-bottom: 1px dotted var(--accent);
+            transition: all 0.2s ease;
+        }
+        
+        .citation-link:hover {
+            background: rgba(231, 76, 60, 0.1);
+            border-bottom: 1px solid var(--accent);
+        }
+        
+        .concept-card {
+            background: white;
+            border: 1px solid #e5e7eb;
+            border-radius: 12px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            transition: all 0.3s ease;
+        }
+        
+        .concept-card:hover {
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            transform: translateY(-2px);
+        }
+        
+        .code-block {
+            background: #1e293b;
+            color: #e2e8f0;
+            border-radius: 8px;
+            padding: 1.5rem;
+            overflow-x: auto;
+            font-family: 'Fira Code', monospace;
+            margin: 1.5rem 0;
+        }
+        
+        .highlight-box {
+            background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);
+            border-left: 4px solid #0ea5e9;
+            padding: 1.5rem;
+            border-radius: 8px;
+            margin: 1.5rem 0;
+        }
+        
+        .toc-link {
+            display: block;
+            padding: 0.5rem 1.5rem;
+            color: var(--secondary);
+            text-decoration: none;
+            border-radius: 6px;
+            margin: 0.25rem 1rem;
+            transition: all 0.2s ease;
+        }
+        
+        .toc-link:hover {
+            background: rgba(52, 73, 94, 0.1);
+            color: var(--primary);
+        }
+        
+        .toc-link.active {
+            background: var(--accent);
+            color: white;
+        }
+        
+        .section-number {
+            background: var(--accent);
+            color: white;
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            font-size: 0.875rem;
+        }
+        
+        .mermaid-container {
+            display: flex;
+            justify-content: center;
+            min-height: 300px;
+            max-height: 800px;
+            background: #ffffff;
+            border: 2px solid #e5e7eb;
+            border-radius: 12px;
+            padding: 30px;
+            margin: 30px 0;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.08);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .mermaid-container .mermaid {
+            width: 100%;
+            max-width: 100%;
+            height: 100%;
+            cursor: grab;
+            transition: transform 0.3s ease;
+            transform-origin: center center;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            touch-action: none;
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+        }
+
+        .mermaid-container .mermaid svg {
+            max-width: 100%;
+            height: 100%;
+            display: block;
+            margin: 0 auto;
+        }
+
+        .mermaid-container .mermaid:active {
+            cursor: grabbing;
+        }
+
+        .mermaid-container.zoomed .mermaid {
+            height: 100%;
+            width: 100%;
+            cursor: grab;
+        }
+
+        .mermaid-controls {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            display: flex;
+            gap: 10px;
+            z-index: 20;
+            background: rgba(255, 255, 255, 0.95);
+            padding: 8px;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .mermaid-control-btn {
+            background: #ffffff;
+            border: 1px solid #d1d5db;
+            border-radius: 6px;
+            padding: 10px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            color: #374151;
+            font-size: 14px;
+            min-width: 36px;
+            height: 36px;
+            text-align: center;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .mermaid-control-btn:hover {
+            background: #f8fafc;
+            border-color: #3b82f6;
+            color: #3b82f6;
+            transform: translateY(-1px);
+        }
+
+        .mermaid-control-btn:active {
+            transform: scale(0.95);
+        }
+        
+        /* Improve mermaid text contrast and styling */
+        .mermaid-container .mermaid svg {
+            max-width: 100%;
+            height: 100%;
+            display: block;
+            margin: 0 auto;
+            font-family: 'Inter', sans-serif;
+        }
+        
+        /* Ensure text has better contrast on all backgrounds */
+        .mermaid .node rect,
+        .mermaid .node circle,
+        .mermaid .node ellipse,
+        .mermaid .node polygon {
+            stroke-width: 2px;
+            stroke: #374151;
+        }
+        
+        .mermaid .node .label {
+            color: #1f2937;
+            font-weight: 600;
+            font-size: 14px;
+            text-shadow: 0 1px 2px rgba(255, 255, 255, 0.8);
+        }
+        
+        .mermaid .edgePath .path {
+            stroke: #4b5563;
+            stroke-width: 2px;
+        }
+        
+        .mermaid .arrowheadPath {
+            fill: #4b5563;
+            stroke: #4b5563;
+        }
+        
+        /* Improve contrast for different node colors */
+        .mermaid .node[class*="node0"] .label,
+        .mermaid .node[class*="node1"] .label,
+        .mermaid .node[class*="node2"] .label,
+        .mermaid .node[class*="node3"] .label {
+            color: #ffffff;
+            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
+        }
+        
+        .mermaid .node[class*="node4"] .label,
+        .mermaid .node[class*="node5"] .label,
+        .mermaid .node[class*="node6"] .label {
+            color: #1f2937;
+            text-shadow: 0 1px 2px rgba(255, 255, 255, 0.8);
+        }
+        
+/* Responsive adjustments for mermaid controls */
+@media (max-width: 1024px) {
+    .mermaid-control-btn:not(.reset-zoom) {
+        display: none;
+    }
+    .mermaid-controls {
+        top: auto;
+        bottom: 15px;
+        right: 15px;
+    }
+}
+
+/* Adjustments for small screens */
+@media (max-width: 768px) {
+    .toc-fixed {
+        display: none;
+    }
+    .main-content {
+        margin-left: 0;
+    }
+    .mermaid-container {
+        padding: 15px;
+    }
+}
+    </style>
+  <base target="_blank">
+</head>
+
+  <body>
+    <!-- Fixed Table of Contents -->
+    <nav class="toc-fixed">
+      <div class="px-6 py-4 border-b border-gray-200">
+        <h3 class="serif font-bold text-lg text-gray-800">Table of Contents</h3>
+      </div>
+      <div class="py-4">
+        <a href="#compilation" class="toc-link">1. Java Compilation Process</a>
+        <a href="#oop" class="toc-link">2. Object-Oriented Programming</a>
+        <a href="#inheritance" class="toc-link">3. Inheritance in Detail</a>
+        <a href="#polymorphism" class="toc-link">4. Polymorphism</a>
+        <a href="#abstraction" class="toc-link">5. Abstraction</a>
+        <a href="#encapsulation" class="toc-link">6. Encapsulation</a>
+        <a href="#constructs" class="toc-link">7. Essential Constructs</a>
+        <a href="#strings" class="toc-link">8. Strings in Java</a>
+        <a href="#collections" class="toc-link">9. Collections Framework</a>
+        <a href="#exceptions" class="toc-link">10. Error & Exception Handling</a>
+        <a href="#packages" class="toc-link">11. Packages</a>
+        <a href="#multithreading" class="toc-link">12. Multithreading</a>
+      </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="main-content">
+      <!-- Hero Section -->
+      <section class="hero-section relative">
+        <div class="hero-overlay"></div>
+        <div class="relative z-10 px-8 py-16">
+          <div class="bento-grid max-w-7xl mx-auto">
+            <div class="bento-item">
+              <h1 class="serif text-4xl sm:text-5xl md:text-6xl font-bold text-white mb-6 italic leading-tight">
+                A Comprehensive Guide to
+                <br>
+                <span class="text-yellow-300">Core Java Concepts</span>
+              </h1>
+              <p class="text-base sm:text-xl text-gray-200 mb-8 max-w-2xl">
+                From compilation to concurrency: Master the fundamental principles that make Java a powerful, platform-independent programming language
+              </p>
+              <div class="flex items-center space-x-6 text-gray-300">
+                <div class="flex items-center space-x-2">
+                  <i class="fas fa-code text-yellow-300"></i>
+                  <span>12 Core Topics</span>
+                </div>
+                <div class="flex items-center space-x-2">
+                  <i class="fas fa-layer-group text-yellow-300"></i>
+                  <span>Comprehensive Coverage</span>
+                </div>
+              </div>
+            </div>
+            <div class="bento-item bg-purple-700 bg-opacity-20">
+              <h3 class="serif text-2xl font-bold text-white mb-4">Key Highlights</h3>
+              <ul class="space-y-3 text-gray-200">
+                <li class="flex items-start space-x-3">
+                  <i class="fas fa-check-circle text-green-400 mt-1"></i>
+                  <span>Platform independence through JVM architecture</span>
+                </li>
+                <li class="flex items-start space-x-3">
+                  <i class="fas fa-check-circle text-green-400 mt-1"></i>
+                  <span>Object-oriented programming principles</span>
+                </li>
+                <li class="flex items-start space-x-3">
+                  <i class="fas fa-check-circle text-green-400 mt-1"></i>
+                  <span>Advanced concurrency and multithreading</span>
+                </li>
+                <li class="flex items-start space-x-3">
+                  <i class="fas fa-check-circle text-green-400 mt-1"></i>
+                  <span>Robust error handling mechanisms</span>
+                </li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Java Compilation Process -->
+      <section id="compilation" class="px-8 py-16">
+        <div class="max-w-5xl mx-auto">
+          <div class="flex items-center mb-8">
+            <div class="section-number mr-4">1</div>
+            <h2 class="serif text-4xl font-bold text-gray-800">The Java Compilation and Execution Process</h2>
+          </div>
+
+          <div class="concept-card">
+            <p class="text-lg text-gray-700 mb-6">
+              The Java programming language is renowned for its platform independence, fundamentally rooted in its unique compilation and execution process. Unlike languages like C or C++, which compile directly into machine-specific code, Java employs a two-step process involving an intermediate representation called <strong>bytecode</strong>. This ensures that a Java program can be written once and executed on any system with a compatible Java Virtual Machine (JVM), embodying the <em>"Write Once, Run Anywhere"</em> (WORA) principle <a href="#ref-7" class="citation-link">[7]</a>.
+            </p>
+
+            <div class="highlight-box">
+              <h4 class="font-bold text-lg mb-3 text-gray-800">The Java Compilation Flow</h4>
+              <p class="text-gray-700">
+                The journey from Java source code to running application involves: <code>.java</code> file creation → <code>javac</code> compilation → <code>.class</code> bytecode generation → JVM execution with bytecode verification and JIT compilation <a href="#ref-1" class="citation-link">[1]</a>
+                <a href="#ref-6" class="citation-link">[6]</a>.
+              </p>
+            </div>
+
+            <h3 class="serif text-2xl font-bold text-gray-800 mb-4">From Source Code to Bytecode</h3>
+            <p class="text-gray-700 mb-4">
+              The initial phase involves transforming human-readable source code into platform-neutral bytecode. This multi-step process ensures code correctness and adherence to Java language rules through the Java compiler (<code>javac</code>) <a href="#ref-3" class="citation-link">[3]</a>.
+            </p>
+
+            <div class="grid md:grid-cols-2 gap-6 mb-6">
+              <div class="bg-gray-50 p-4 rounded-lg">
+                <h4 class="font-bold text-gray-800 mb-2"><i class="fas fa-file-code text-blue-500 mr-2"></i>Writing Java Source Files</h4>
+                <p class="text-sm text-gray-600">
+                  Source code is written in <code>.java</code> files containing class definitions with proper syntax, following naming conventions where public class names match filenames <a href="#ref-14" class="citation-link">[14]</a>
+                  <a href="#ref-11" class="citation-link">[11]</a>.
+                </p>
+              </div>
+              <div class="bg-gray-50 p-4 rounded-lg">
+                <h4 class="font-bold text-gray-800 mb-2"><i class="fas fa-cogs text-green-500 mr-2"></i>The Java Compiler (javac)</h4>
+                <p class="text-sm text-gray-600">
+                  <code>javac</code> parses source code into Abstract Syntax Trees (AST), performs semantic analysis, and generates platform-independent bytecode stored in <code>.class</code> files <a href="#ref-2" class="citation-link">[2]</a>.
+                </p>
+              </div>
+            </div>
+
+            <h3 class="serif text-2xl font-bold text-gray-800 mb-4">Execution by the Java Virtual Machine</h3>
+            <p class="text-gray-700 mb-4">
+              After compilation, the JVM handles execution through class loading, bytecode verification, and either interpretation or Just-In-Time (JIT) compilation to native machine code <a href="#ref-6" class="citation-link">[6]</a>
+              <a href="#ref-15" class="citation-link">[15]</a>.
+            </p>
+
+            <div class="grid md:grid-cols-3 gap-4 mb-6">
+              <div class="bg-blue-50 p-4 rounded-lg border border-blue-200">
+                <h4 class="font-bold text-blue-800 mb-2">Class Loading</h4>
+                <p class="text-sm text-blue-700">Dynamic loading of <code>.class</code> files on demand, creating a hierarchical namespace of class bodies <a href="#ref-5" class="citation-link">[5]</a>.</p>
+              </div>
+              <div class="bg-green-50 p-4 rounded-lg border border-green-200">
+                <h4 class="font-bold text-green-800 mb-2">Bytecode Verification</h4>
+                <p class="text-sm text-green-700">Rigorous security checks ensuring code safety, preventing illegal operations and memory violations <a href="#ref-5" class="citation-link">[5]</a>.</p>
+              </div>
+              <div class="bg-purple-50 p-4 rounded-lg border border-purple-200">
+                <h4 class="font-bold text-purple-800 mb-2">JIT Compilation</h4>
+                <p class="text-sm text-purple-700">HotSpot JVM identifies frequently executed code and compiles it into optimized native machine code <a href="#ref-6" class="citation-link">[6]</a>.</p>
+              </div>
+            </div>
+
+            <h3 class="serif text-2xl font-bold text-gray-800 mb-4">Achieving Platform Independence</h3>
+            <p class="text-gray-700 mb-4">
+              The JVM serves as an abstraction layer between Java applications and underlying hardware, providing a standardized virtualized environment <a href="#ref-9" class="citation-link">[9]</a>. This separation enables the WORA principle, allowing the same bytecode to run on any platform with a compatible JVM <a href="#ref-1" class="citation-link">[1]</a>
+              <a href="#ref-7" class="citation-link">[7]</a>.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <!-- Object-Oriented Programming -->
+      <section id="oop" class="px-8 py-16 bg-gray-50">
+        <div class="max-w-5xl mx-auto">
+          <div class="flex items-center mb-8">
+            <div class="section-number mr-4">2</div>
+            <h2 class="serif text-4xl font-bold text-gray-800">Object-Oriented Programming (OOP) in Java</h2>
+          </div>
+
+          <div class="concept-card">
+            <p class="text-lg text-gray-700 mb-6">
+              Object-Oriented Programming structures software around data and objects rather than functions and logic, simplifying development and maintenance through clear modular structure <a href="#ref-326" class="citation-link">[326]</a>. Java implements OOP using classes as blueprints and objects as concrete instances representing real-life entities <a href="#ref-312" class="citation-link">[312]</a>.
+            </p>
+
+            <div class="mermaid-container">
+              <div class="mermaid-controls">
+                <button class="mermaid-control-btn zoom-in" title="放大">
+                  <i class="fas fa-search-plus"></i>
+                </button>
+                <button class="mermaid-control-btn zoom-out" title="缩小">
+                  <i class="fas fa-search-minus"></i>
+                </button>
+                <button class="mermaid-control-btn reset-zoom" title="重置">
+                  <i class="fas fa-expand-arrows-alt"></i>
+                </button>
+                <button class="mermaid-control-btn fullscreen" title="全屏查看">
+                  <i class="fas fa-expand"></i>
+                </button>
+              </div>
+              <div class="mermaid">
+                graph TD
+                A["OOP Principles"] --> B["Encapsulation"]
+                A --> C["Inheritance"]
+                A --> D["Polymorphism"]
+                A --> E["Abstraction"]
+
+                B --> B1["Data Hiding"]
+                B --> B2["Access Control"]
+
+                C --> C1["Code Reusability"]
+                C --> C2["Hierarchy"]
+
+                D --> D1["Method Overloading"]
+                D --> D2["Method Overriding"]
+
+                E --> E1["Abstract Classes"]
+                E --> E2["Interfaces"]
+              </div>
+            </div>
+
+            <h3 class="serif text-2xl font-bold text-gray-800 mb-4">The Four Pillars of OOP</h3>
+            <p class="text-gray-700 mb-6">
+              The foundational principles of OOP—Encapsulation, Inheritance, Polymorphism, and Abstraction—provide a structured approach to organizing code, managing complexity, and promoting code reuse <a href="#ref-313" class="citation-link">[313]</a>
+              <a href="#ref-314" class="citation-link">[314]</a>.
+            </p>
+
+            <div class="grid lg:grid-cols-2 gap-6 mb-8">
+              <div class="concept-card border-l-4 border-blue-500">
+                <h4 class="font-bold text-xl text-blue-800 mb-3"><i class="fas fa-shield-alt mr-2"></i>Encapsulation</h4>
+                <p class="text-gray-700 mb-3">
+                  Bundling data and methods into single units while hiding internal implementation details through <code>private</code> variables and public getter/setter methods <a href="#ref-308" class="citation-link">[308]</a>
+                  <a href="#ref-310" class="citation-link">[310]</a>.
+                </p>
+                <div class="bg-blue-50 p-3 rounded text-sm text-blue-800">
+                  <strong>Key Benefit:</strong> Data integrity and controlled access, protecting object state from unauthorized modifications <a href="#ref-340" class="citation-link">[340]</a>
+                  <a href="#ref-355" class="citation-link">[355]</a>.
+                </div>
+              </div>
+
+              <div class="concept-card border-l-4 border-green-500">
+                <h4 class="font-bold text-xl text-green-800 mb-3"><i class="fas fa-sitemap mr-2"></i>Inheritance</h4>
+                <p class="text-gray-700 mb-3">
+                  Allowing subclasses to acquire properties and behaviors from superclasses using the <code>extends</code> keyword, promoting code reusability and hierarchical relationships <a href="#ref-295" class="citation-link">[295]</a>
+                  <a href="#ref-299" class="citation-link">[299]</a>.
+                </p>
+                <div class="bg-green-50 p-3 rounded text-sm text-green-800">
+                  <strong>Core Concept:</strong> "Is-a" relationship (Dog is an Animal) enables building upon existing, well-tested code while facilitating polymorphism <a href="#ref-296" class="citation-link">[296]</a>.
+                </div>
+              </div>
+
+              <div class="concept-card border-l-4 border-purple-500">
+                <h4 class="font-bold text-xl text-purple-800 mb-3"><i class="fas fa-random mr-2"></i>Polymorphism</h4>
+                <p class="text-gray-700 mb-3">
+                  Enabling single entities to take multiple forms through method overloading (compile-time) and method overriding (runtime), allowing flexible and extensible code <a href="#ref-300" class="citation-link">[300]</a>.
+                </p>
+                <div class="bg-purple-50 p-3 rounded text-sm text-purple-800">
+                  <strong>Mechanisms:</strong> Method overloading with different parameters and method overriding through dynamic method dispatch <a href="#ref-333" class="citation-link">[333]</a>
+                  <a href="#ref-334" class="citation-link">[334]</a>.
+                </div>
+              </div>
+
+              <div class="concept-card border-l-4 border-orange-500">
+                <h4 class="font-bold text-xl text-orange-800 mb-3"><i class="fas fa-eye-slash mr-2"></i>Abstraction</h4>
+                <p class="text-gray-700 mb-3">
+                  Hiding complex implementation details while exposing essential features through abstract classes and interfaces, reducing complexity and enhancing maintainability <a href="#ref-304" class="citation-link">[304]</a>.
+                </p>
+                <div class="bg-orange-50 p-3 rounded text-sm text-orange-800">
+                  <strong>Implementation:</strong> Abstract classes for partial abstraction and interfaces for complete abstraction defining method contracts <a href="#ref-305" class="citation-link">[305]</a>
+                  <a href="#ref-306" class="citation-link">[306]</a>.
+                </div>
+              </div>
+            </div>
+
+            <h3 class="serif text-2xl font-bold text-gray-800 mb-4">Classes and Objects: The Building Blocks</h3>
+            <div class="grid md:grid-cols-2 gap-6">
+              <div class="bg-gray-100 p-6 rounded-lg">
+                <h4 class="font-bold text-lg text-gray-800 mb-3"><i class="fas fa-blueprint text-blue-600 mr-2"></i>Classes as Blueprints</h4>
+                <p class="text-gray-700 text-sm mb-3">
+                  Classes define attributes (fields) and behaviors (methods) that objects will have, serving as templates for creating instances <a href="#ref-313" class="citation-link">[313]</a>.
+                </p>
+                <div class="code-block text-sm">
+                  <pre><code>class Car {
+    String brand;
+    int speed;
+    
+    void drive() {
+        System.out.println("Driving at " + speed + " km/h");
+    }
+}</code></pre>
+                </div>
+              </div>
+              <div class="bg-gray-100 p-6 rounded-lg">
+                <h4 class="font-bold text-lg text-gray-800 mb-3"><i class="fas fa-cube text-green-600 mr-2"></i>Objects as Instances</h4>
+                <p class="text-gray-700 text-sm mb-3">
+                  Objects are concrete entities created from class blueprints using the <code>new</code> keyword, occupying memory and maintaining unique state <a href="#ref-312" class="citation-link">[312]</a>.
+                </p>
+                <div class="code-block text-sm">
+                  <pre><code>Car myCar = new Car();
+myCar.brand = "Toyota";
+myCar.speed = 120;
+myCar.drive(); // Output: Driving at 120 km/h</code></pre>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Inheritance Section -->
+      <section id="inheritance" class="px-8 py-16">
+        <div class="max-w-5xl mx-auto">
+          <div class="flex items-center mb-8">
+            <div class="section-number mr-4">3</div>
+            <h2 class="serif text-4xl font-bold text-gray-800">Inheritance in Detail</h2>
+          </div>
+
+          <div class="concept-card">
+            <p class="text-lg text-gray-700 mb-6">
+              Inheritance provides a powerful mechanism for code reuse and establishing hierarchical relationships between classes. It allows subclasses to inherit attributes and methods from superclasses using the <code>extends</code> keyword <a href="#ref-295" class="citation-link">[295]</a>
+              <a href="#ref-299" class="citation-link">[299]</a>.
+            </p>
+
+            <div class="mermaid-container">
+              <div class="mermaid-controls">
+                <button class="mermaid-control-btn zoom-in" title="放大">
+                  <i class="fas fa-search-plus"></i>
+                </button>
+                <button class="mermaid-control-btn zoom-out" title="缩小">
+                  <i class="fas fa-search-minus"></i>
+                </button>
+                <button class="mermaid-control-btn reset-zoom" title="重置">
+                  <i class="fas fa-expand-arrows-alt"></i>
+                </button>
+                <button class="mermaid-control-btn fullscreen" title="全屏查看">
+                  <i class="fas fa-expand"></i>
+                </button>
+              </div>
+              <div class="mermaid">
+                graph TD
+                A["Animal"] --> B["Dog"]
+                A --> C["Cat"]
+                B --> D["Puppy"]
+
+                A --> A1["name"]
+                A --> A2["eat()"]
+
+                B --> B1["bark()"]
+                C --> C1["meow()"]
+                D --> D1["play()"]
+              </div>
+            </div>
+
+            <h3 class="serif text-2xl font-bold text-gray-800 mb-4">Core Concepts of Inheritance</h3>
+            <div class="grid lg:grid-cols-3 gap-6 mb-8">
+              <div class="bg-blue-50 p-6 rounded-lg border border-blue-200">
+                <h4 class="font-bold text-blue-800 mb-3"><i class="fas fa-arrow-up mr-2"></i>Superclasses</h4>
+                <p class="text-blue-700 text-sm">
+                  General classes defining common properties and behaviors that can be inherited by subclasses, serving as templates for specialization.
+                </p>
+              </div>
+              <div class="bg-green-50 p-6 rounded-lg border border-green-200">
+                <h4 class="font-bold text-green-800 mb-3"><i class="fas fa-arrow-down mr-2"></i>Subclasses</h4>
+                <p class="text-green-700 text-sm">
+                  Specialized classes that inherit from superclasses, acquiring all non-private members while adding unique features or overriding existing ones <a href="#ref-299" class="citation-link text-blue-600">[299]</a>.
+                </p>
+              </div>
+              <div class="bg-purple-50 p-6 rounded-lg border border-purple-200">
+                <h4 class="font-bold text-purple-800 mb-3"><i class="fas fa-star mr-2"></i>super Keyword</h4>
+                <p class="text-purple-700 text-sm">
+                  Provides access to superclass members, enabling constructor calls and method invocation from overridden implementations <a href="#ref-297" class="citation-link text-blue-600">[297]</a>.
+                </p>
+              </div>
+            </div>
+
+            <h3 class="serif text-2xl font-bold text-gray-800 mb-4">Types of Inheritance in Java</h3>
+            <div class="grid md:grid-cols-2 gap-6 mb-8">
+              <div class="concept-card border-l-4 border-blue-500">
+                <h4 class="font-bold text-lg text-blue-800 mb-3">Single Inheritance</h4>
+                <p class="text-gray-700 mb-3">
+                  A subclass extends only one superclass, establishing a simple parent-child relationship. This is the only type of class inheritance directly supported by Java <a href="#ref-315" class="citation-link">[315]</a>
+                  <a href="#ref-316" class="citation-link">[316]</a>.
+                </p>
+                <div class="code-block text-sm">
+                  <pre><code>class Animal {
+    void eat() { System.out.println("Eating..."); }
+}
+
+class Dog extends Animal {
+    void bark() { System.out.println("Barking..."); }
+}</code></pre>
+                </div>
+              </div>
+
+              <div class="concept-card border-l-4 border-green-500">
+                <h4 class="font-bold text-lg text-green-800 mb-3">Multilevel Inheritance</h4>
+                <p class="text-gray-700 mb-3">
+                  A class inherits from a class that is itself a subclass of another class, creating a chain of inheritance with each level adding more specific characteristics <a href="#ref-316" class="citation-link">[316]</a>.
+                </p>
+                <div class="code-block text-sm">
+                  <pre><code>class Animal { /* ... */ }
+class Dog extends Animal { /* ... */ }
+class Puppy extends Dog {
+    void play() { System.out.println("Playing..."); }
+}</code></pre>
+                </div>
+              </div>
+            </div>
+
+            <div class="grid md:grid-cols-2 gap-6 mb-8">
+              <div class="concept-card border-l-4 border-purple-500">
+                <h4 class="font-bold text-lg text-purple-800 mb-3">Hierarchical Inheritance</h4>
+                <p class="text-gray-700 mb-3">
+                  Multiple subclasses inherit from a single superclass, forming a tree-like structure that promotes code sharing among related classes <a href="#ref-315" class="citation-link">[315]</a>.
+                </p>
+                <div class="code-block text-sm">
+                  <pre><code>class Shape { /* ... */ }
+class Circle extends Shape { /* ... */ }
+class Rectangle extends Shape { /* ... */ }
+class Triangle extends Shape { /* ... */ }</code></pre>
+                </div>
+              </div>
+
+              <div class="concept-card border-l-4 border-orange-500">
+                <h4 class="font-bold text-lg text-orange-800 mb-3">Multiple Inheritance via Interfaces</h4>
+                <p class="text-gray-700 mb-3">
+                  While Java doesn't support multiple class inheritance, it achieves similar functionality through interfaces, allowing classes to implement multiple interface contracts <a href="#ref-296" class="citation-link">[296]</a>.
+                </p>
+                <div class="code-block text-sm">
+                  <pre><code>interface Camera { void takePhoto(); }
+interface MusicPlayer { void playMusic(); }
+class Smartphone implements Camera, MusicPlayer {
+    // Implementation for both interfaces
+}</code></pre>
+                </div>
+              </div>
+            </div>
+
+            <h3 class="serif text-2xl font-bold text-gray-800 mb-4">Method Overriding</h3>
+            <p class="text-gray-700 mb-4">
+              Method overriding allows subclasses to provide specific implementations of methods already defined in their superclasses, enabling runtime polymorphism <a href="#ref-186" class="citation-link">[186]</a>. The
+              <code>@Override</code> annotation helps prevent errors by ensuring proper method overriding <a href="#ref-189" class="citation-link">[189]</a>.
+            </p>
+
+            <div class="highlight-box">
+              <h4 class="font-bold text-lg mb-3 text-gray-800">Method Overriding Rules</h4>
+              <ul class="text-gray-700 list-disc list-inside space-y-1">
+                <li>Same method name, return type, and parameter list as superclass method</li>
+                <li>Access level cannot be more restrictive than superclass method</li>
+                <li>
+                  <code>final</code> methods cannot be overridden
+                </li>
+                <li>
+                  <code>static</code> methods cannot be overridden but can be hidden
+                </li>
+                <li>
+                  <code>abstract</code> methods must be implemented unless subclass is also abstract
+                </li>
+              </ul>
+              <p class="text-sm text-gray-600 mt-3">Source: <a href="#ref-186" class="citation-link">[186]</a>
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Polymorphism Section -->
+      <section id="polymorphism" class="px-8 py-16 bg-gray-50">
+        <div class="max-w-5xl mx-auto">
+          <div class="flex items-center mb-8">
+            <div class="section-number mr-4">4</div>
+            <h2 class="serif text-4xl font-bold text-gray-800">Polymorphism in Detail</h2>
+          </div>
+
+          <div class="concept-card">
+            <p class="text-lg text-gray-700 mb-6">
+              Polymorphism enables a single entity to take on multiple forms, allowing objects to behave differently based on their specific class type even when accessed through common reference types <a href="#ref-391" class="citation-link">[391]</a>. Derived from Greek words "poly" (many) and "morph" (forms), this concept is crucial for writing modular, extensible, and maintainable code.
+            </p>
+
+            <div class="mermaid-container">
+              <div class="mermaid-controls">
+                <button class="mermaid-control-btn zoom-in" title="放大">
+                  <i class="fas fa-search-plus"></i>
+                </button>
+                <button class="mermaid-control-btn zoom-out" title="缩小">
+                  <i class="fas fa-search-minus"></i>
+                </button>
+                <button class="mermaid-control-btn reset-zoom" title="重置">
+                  <i class="fas fa-expand-arrows-alt"></i>
+                </button>
+                <button class="mermaid-control-btn fullscreen" title="全屏查看">
+                  <i class="fas fa-expand"></i>
+                </button>
+              </div>
+              <div class="mermaid">
+                graph LR
+                A["Polymorphism"] --> B["Compile-Time"]
+                A --> C["Run-Time"]
+
+                B --> B1["Method Overloading"]
+                B --> B2["Constructor Overloading"]
+
+                C --> C1["Method Overriding"]
+                C --> C2["Dynamic Dispatch"]
+
+                C1 --> C3["Upcasting"]
+                C1 --> C4["Downcasting"]
+              </div>
+            </div>
+
+            <h3 class="serif text-2xl font-bold text-gray-800 mb-4">Compile-Time Polymorphism (Static Binding)</h3>
+            <p class="text-gray-700 mb-6">
+              In compile-time polymorphism, the method to be executed is determined at compile time based on method signatures. This is primarily achieved through method overloading, where multiple methods share the same name but have different parameter lists <a href="#ref-391" class="citation-link">[391]</a>.
+            </p>
+
+            <div class="grid md:grid-cols-2 gap-6 mb-8">
+              <div class="concept-card border-l-4 border-blue-500">
+                <h4 class="font-bold text-lg text-blue-800 mb-3"><i class="fas fa-code mr-2"></i>Method Overloading</h4>
+                <p class="text-gray-700 mb-3">
+                  Multiple methods with the same name but different parameter lists (number, types, or order of parameters) allowing similar operations with different inputs.
+                </p>
+                <div class="code-block text-sm">
+                  <pre><code>class Calculator {
+    int add(int a, int b) { return a + b; }
+    double add(double a, double b) { return a + b; }
+    String add(String a, String b) { return a + b; }
+}</code></pre>
+                </div>
+              </div>
+
+              <div class="concept-card border-l-4 border-green-500">
+                <h4 class="font-bold text-lg text-green-800 mb-3"><i class="fas fa-constructor mr-2"></i>Constructor Overloading</h4>
+                <p class="text-gray-700 mb-3">
+                  Multiple constructors with different parameter lists providing various ways to initialize objects with different initial states.
+                </p>
+                <div class="code-block text-sm">
+                  <pre><code>class Person {
+    String name;
+    int age;
+    
+    Person() { this.name = "Unknown"; this.age = 0; }
+    Person(String name) { this.name = name; this.age = 0; }
+    Person(String name, int age) { this.name = name; this.age = age; }
+}</code></pre>
+                </div>
+              </div>
+            </div>
+
+            <h3 class="serif text-2xl font-bold text-gray-800 mb-4">Runtime Polymorphism (Dynamic Binding)</h3>
+            <p class="text-gray-700 mb-6">
+              Runtime polymorphism determines method execution at runtime based on the actual object type, not the reference type. This powerful mechanism is achieved through method overriding and dynamic method dispatch <a href="#ref-391" class="citation-link">[391]</a>.
+            </p>
+
+            <div class="highlight-box">
+              <h4 class="font-bold text-lg mb-3 text-gray-800">Dynamic Method Dispatch Example</h4>
+              <p class="text-gray-700 mb-3">
+                When a superclass reference variable points to a subclass object and an overridden method is called, the subclass implementation executes at runtime.
+              </p>
+              <div class="code-block text-sm">
+                <pre><code>class Vehicle {
+    void start() { System.out.println("Vehicle starting..."); }
+}
+
+class Car extends Vehicle {
+    @Override
+    void start() { System.out.println("Car engine starting..."); }
+}
+
+class Motorcycle extends Vehicle {
+    @Override
+    void start() { System.out.println("Motorcycle engine starting..."); }
+}
+
+// Usage
+Vehicle vehicle1 = new Car();
+Vehicle vehicle2 = new Motorcycle();
+
+vehicle1.start(); // Output: Car engine starting...
+vehicle2.start(); // Output: Motorcycle engine starting...</code></pre>
+              </div>
+            </div>
+
+            <h3 class="serif text-2xl font-bold text-gray-800 mb-4">Upcasting and Downcasting</h3>
+            <div class="grid md:grid-cols-2 gap-6">
+              <div class="bg-gray-100 p-6 rounded-lg">
+                <h4 class="font-bold text-lg text-gray-800 mb-3"><i class="fas fa-arrow-up text-blue-600 mr-2"></i>Upcasting</h4>
+                <p class="text-gray-700 text-sm mb-3">
+                  Assigning a subclass object reference to a superclass reference variable. This is implicit and always safe, as a subclass object is always an instance of its superclass.
+                </p>
+                <div class="code-block text-sm">
+                  <pre><code>Dog dog = new Dog();
+Animal animal = dog; // Upcasting - always safe</code></pre>
+                </div>
+              </div>
+
+              <div class="bg-gray-100 p-6 rounded-lg">
+                <h4 class="font-bold text-lg text-gray-800 mb-3"><i class="fas fa-arrow-down text-orange-600 mr-2"></i>Downcasting</h4>
+                <p class="text-gray-700 text-sm mb-3">
+                  Assigning a superclass object reference to a subclass reference variable. This requires explicit casting and should be done carefully after type checking with
+                  <code>instanceof</code>.
+                </p>
+                <div class="code-block text-sm">
+                  <pre><code>Animal animal = new Dog();
+if (animal instanceof Dog) {
+    Dog dog = (Dog) animal; // Safe downcasting
+}</code></pre>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Abstraction Section -->
+      <section id="abstraction" class="px-8 py-16">
+        <div class="max-w-5xl mx-auto">
+          <div class="flex items-center mb-8">
+            <div class="section-number mr-4">5</div>
+            <h2 class="serif text-4xl font-bold text-gray-800">Abstraction in Detail</h2>
+          </div>
+
+          <div class="concept-card">
+            <p class="text-lg text-gray-700 mb-6">
+              Abstraction focuses on hiding complex implementation details while exposing only essential features to users. This separation of concerns enhances code readability, maintainability, and modularity by separating the "what" from the "how."
+            </p>
+
+            <div class="mermaid-container">
+              <div class="mermaid-controls">
+                <button class="mermaid-control-btn zoom-in" title="放大">
+                  <i class="fas fa-search-plus"></i>
+                </button>
+                <button class="mermaid-control-btn zoom-out" title="缩小">
+                  <i class="fas fa-search-minus"></i>
+                </button>
+                <button class="mermaid-control-btn reset-zoom" title="重置">
+                  <i class="fas fa-expand-arrows-alt"></i>
+                </button>
+                <button class="mermaid-control-btn fullscreen" title="全屏查看">
+                  <i class="fas fa-expand"></i>
+                </button>
+              </div>
+              <div class="mermaid">
+                graph TD
+                A["Abstraction"] --> B["Abstract Classes"]
+                A --> C["Interfaces"]
+
+                B --> B1["Partial Abstraction"]
+                B --> B2["Can Have Concrete Methods"]
+                B --> B3["Single Inheritance"]
+
+                C --> C1["100% Abstraction"]
+                C --> C2["Only Abstract Methods*"]
+                C --> C3["Multiple Inheritance"]
+
+                C --> C4["Default Methods"]
+                C --> C5["Static Methods"]
+                C --> C6["Java 8+ Features"]
+              </div>
+            </div>
+
+            <h3 class="serif text-2xl font-bold text-gray-800 mb-4">Abstract Classes</h3>
+            <p class="text-gray-700 mb-6">
+              An abstract class cannot be instantiated directly and serves as a blueprint for subclasses. It can contain both abstract methods (without implementation) and concrete methods (with implementation), providing a common structure while allowing partial abstraction <a href="#ref-305" class="citation-link">[305]</a>
+              <a href="#ref-361" class="citation-link">[361]</a>.
+            </p>
+
+            <div class="grid md:grid-cols-2 gap-6 mb-8">
+              <div class="concept-card border-l-4 border-blue-500">
+                <h4 class="font-bold text-lg text-blue-800 mb-3"><i class="fas fa-file-code mr-2"></i>Declaring Abstract Classes</h4>
+                <p class="text-gray-700 mb-3">
+                  Abstract classes are declared with the <code>abstract</code> keyword and serve as base classes that cannot be instantiated directly.
+                </p>
+                <div class="code-block text-sm">
+                  <pre><code>abstract class Vehicle {
+    private String brand;
+    
+    public Vehicle(String brand) {
+        this.brand = brand;
+    }
+    
+    // Abstract method
+    abstract void accelerate();
+    
+    // Concrete method
+    void startEngine() {
+        System.out.println("Engine started");
+    }
+}</code></pre>
+                </div>
+              </div>
+
+              <div class="concept-card border-l-4 border-green-500">
+                <h4 class="font-bold text-lg text-green-800 mb-3"><i class="fas fa-contract mr-2"></i>Abstract Methods as Contracts</h4>
+                <p class="text-gray-700 mb-3">
+                  Abstract methods define contracts that subclasses must implement, specifying what to do but not how to do it.
+                </p>
+                <div class="code-block text-sm">
+                  <pre><code>abstract class Shape {
+    abstract double getArea();
+    abstract double getPerimeter();
+}
+
+class Circle extends Shape {
+    private double radius;
+    
+    @Override
+    double getArea() { return Math.PI * radius * radius; }
+    
+    @Override
+    double getPerimeter() { return 2 * Math.PI * radius; }
+}</code></pre>
+                </div>
+              </div>
+            </div>
+
+            <h3 class="serif text-2xl font-bold text-gray-800 mb-4">Interfaces</h3>
+            <p class="text-gray-700 mb-6">
+              Interfaces define contracts that classes must implement, providing 100% abstraction before Java 8. They enable multiple inheritance and promote loose coupling between components <a href="#ref-306" class="citation-link">[306]</a>.
+            </p>
+
+            <div class="grid md:grid-cols-2 gap-6 mb-8">
+              <div class="concept-card border-l-4 border-purple-500">
+                <h4 class="font-bold text-lg text-purple-800 mb-3"><i class="fas fa-link mr-2"></i>Defining and Implementing Interfaces</h4>
+                <p class="text-gray-700 mb-3">
+                  Interfaces are defined with the <code>interface</code> keyword and implemented using <code>implements</code>. A class can implement multiple interfaces.
+                </p>
+                <div class="code-block text-sm">
+                  <pre><code>interface Drawable {
+    void draw();
+    void resize(double factor);
+}
+
+interface Colorable {
+    void setColor(String color);
+}
+
+class Circle implements Drawable, Colorable {
+    @Override
+    public void draw() { /* Implementation */ }
+    
+    @Override
+    public void resize(double factor) { /* Implementation */ }
+    
+    @Override
+    public void setColor(String color) { /* Implementation */ }
+}</code></pre>
+                </div>
+              </div>
+
+              <div class="concept-card border-l-4 border-orange-500">
+                <h4 class="font-bold text-lg text-orange-800 mb-3"><i class="fas fa-plus-circle mr-2"></i>Java 8+ Interface Features</h4>
+                <p class="text-gray-700 mb-3">
+                  Java 8 introduced default and static methods in interfaces, allowing method implementations while maintaining backward compatibility.
+                </p>
+                <div class="code-block text-sm">
+                  <pre><code>interface Vehicle {
+    // Abstract method
+    void start();
+    
+    // Default method
+    default void stop() {
+        System.out.println("Vehicle stopped");
+    }
+    
+    // Static method
+    static void honk() {
+        System.out.println("Honk honk!");
+    }
+}</code></pre>
+                </div>
+              </div>
+            </div>
+
+            <div class="highlight-box">
+              <h4 class="font-bold text-lg mb-3 text-gray-800">When to Use Abstract Classes vs Interfaces</h4>
+              <div class="grid md:grid-cols-2 gap-4">
+                <div>
+                  <h5 class="font-bold text-blue-800 mb-2">Use Abstract Classes When:</h5>
+                  <ul class="text-gray-700 list-disc list-inside space-y-1 text-sm">
+                    <li>You want to share code among related classes</li>
+                    <li>You need to define non-static or non-final fields</li>
+                    <li>You expect classes to have common methods or fields</li>
+                    <li>You want to declare non-public methods</li>
+                  </ul>
+                </div>
+                <div>
+                  <h5 class="font-bold text-green-800 mb-2">Use Interfaces When:</h5>
+                  <ul class="text-gray-700 list-disc list-inside space-y-1 text-sm">
+                    <li>You expect unrelated classes to implement your interface</li>
+                    <li>You want to specify the behavior of a data type</li>
+                    <li>You need multiple inheritance of type</li>
+                    <li>You want to define a contract without implementation</li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Encapsulation Section -->
+      <section id="encapsulation" class="px-8 py-16 bg-gray-50">
+        <div class="max-w-5xl mx-auto">
+          <div class="flex items-center mb-8">
+            <div class="section-number mr-4">6</div>
+            <h2 class="serif text-4xl font-bold text-gray-800">Encapsulation in Detail</h2>
+          </div>
+
+          <div class="concept-card">
+            <p class="text-lg text-gray-700 mb-6">
+              Encapsulation involves bundling data and methods that operate on that data into a single unit while restricting direct access to some components. This mechanism prevents accidental interference and misuse of data, ensuring object integrity and controlled access through well-defined interfaces.
+            </p>
+
+            <div class="mermaid-container">
+              <div class="mermaid-controls">
+                <button class="mermaid-control-btn zoom-in" title="放大">
+                  <i class="fas fa-search-plus"></i>
+                </button>
+                <button class="mermaid-control-btn zoom-out" title="缩小">
+                  <i class="fas fa-search-minus"></i>
+                </button>
+                <button class="mermaid-control-btn reset-zoom" title="重置">
+                  <i class="fas fa-expand-arrows-alt"></i>
+                </button>
+                <button class="mermaid-control-btn fullscreen" title="全屏查看">
+                  <i class="fas fa-expand"></i>
+                </button>
+              </div>
+              <div class="mermaid">
+                graph TD
+                A["Encapsulation"] --> B["Access Control"]
+                A --> C["Data Hiding"]
+
+                B --> B1["Private"]
+                B --> B2["Default"]
+                B --> B3["Protected"]
+                B --> B4["Public"]
+
+                C --> C1["Private Fields"]
+                C --> C2["Public Methods"]
+                C --> C3["Getters/Setters"]
+                C --> C4["Validation Logic"]
+
+                A --> D["Benefits"]
+                D --> D1["Data Integrity"]
+                D --> D2["Controlled Access"]
+                D --> D3["Implementation Flexibility"]
+                D --> D4["Security"]
+              </div>
+            </div>
+
+            <h3 class="serif text-2xl font-bold text-gray-800 mb-4">Access Control with Access Modifiers</h3>
+            <p class="text-gray-700 mb-6">
+              Java provides four access modifiers that control the visibility of classes, constructors, methods, and fields, forming the foundation of encapsulation <a href="#ref-481" class="citation-link">[481]</a>
+              <a href="#ref-472" class="citation-link">[472]</a>.
+            </p>
+
+            <div class="overflow-x-auto mb-8">
+              <table class="w-full border-collapse bg-white rounded-lg shadow-sm">
+                <thead>
+                  <tr class="bg-gray-100">
+                    <th class="border border-gray-300 px-4 py-3 text-left font-bold text-gray-800">Access Modifier</th>
+                    <th class="border border-gray-300 px-4 py-3 text-center font-bold text-gray-800">Same Class</th>
+                    <th class="border border-gray-300 px-4 py-3 text-center font-bold text-gray-800">Same Package</th>
+                    <th class="border border-gray-300 px-4 py-3 text-center font-bold text-gray-800">Subclass (Different Package)</th>
+                    <th class="border border-gray-300 px-4 py-3 text-center font-bold text-gray-800">Different Package</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td class="border border-gray-300 px-4 py-3 font-mono font-bold text-red-600">private</td>
+                    <td class="border border-gray-300 px-4 py-3 text-center"><i class="fas fa-check text-green-500"></i></td>
+                    <td class="border border-gray-300 px-4 py-3 text-center"><i class="fas fa-times text-red-500"></i></td>
+                    <td class="border border-gray-300 px-4 py-3 text-center"><i class="fas fa-times text-red-500"></i></td>
+                    <td class="border border-gray-300 px-4 py-3 text-center"><i class="fas fa-times text-red-500"></i></td>
+                  </tr>
+                  <tr class="bg-gray-50">
+                    <td class="border border-gray-300 px-4 py-3 font-mono font-bold text-yellow-600">default</td>
+                    <td class="border border-gray-300 px-4 py-3 text-center"><i class="fas fa-check text-green-500"></i></td>
+                    <td class="border border-gray-300 px-4 py-3 text-center"><i class="fas fa-check text-green-500"></i></td>
+                    <td class="border border-gray-300 px-4 py-3 text-center"><i class="fas fa-times text-red-500"></i></td>
+                    <td class="border border-gray-300 px-4 py-3 text-center"><i class="fas fa-times text-red-500"></i></td>
+                  </tr>
+                  <tr>
+                    <td class="border border-gray-300 px-4 py-3 font-mono font-bold text-blue-600">protected</td>
+                    <td class="border border-gray-300 px-4 py-3 text-center"><i class="fas fa-check text-green-500"></i></td>
+                    <td class="border border-gray-300 px-4 py-3 text-center"><i class="fas fa-check text-green-500"></i></td>
+                    <td class="border border-gray-300 px-4 py-3 text-center"><i class="fas fa-check text-green-500"></i></td>
+                    <td class="border border-gray-300 px-4 py-3 text-center"><i class="fas fa-times text-red-500"></i></td>
+                  </tr>
+                  <tr class="bg-gray-50">
+                    <td class="border border-gray-300 px-4 py-3 font-mono font-bold text-green-600">public</td>
+                    <td class="border border-gray-300 px-4 py-3 text-center"><i class="fas fa-check text-green-500"></i></td>
+                    <td class="border border-gray-300 px-4 py-3 text-center"><i class="fas fa-check text-green-500"></i></td>
+                    <td class="border border-gray-300 px-4 py-3 text-center"><i class="fas fa-check text-green-500"></i></td>
+                    <td class="border border-gray-300 px-4 py-3 text-center"><i class="fas fa-check text-green-500"></i></td>
+                  </tr>
+                </tbody>
+              </table>
+              <p class="text-sm text-gray-600 mt-2">Table based on information from GeeksForGeeks and Abhi Android <a href="#ref-472" class="citation-link">[472]</a>
+                <a href="#ref-481" class="citation-link">[481]</a>
+              </p>
+            </div>
+
+            <h3 class="serif text-2xl font-bold text-gray-800 mb-4">Implementing Encapsulation</h3>
+            <p class="text-gray-700 mb-6">
+              Encapsulation is implemented by making fields private and providing public getter and setter methods for controlled access. This approach allows classes to maintain data integrity through validation and business rule enforcement <a href="#ref-126" class="citation-link">[126]</a>.
+            </p>
+
+            <div class="concept-card border-l-4 border-blue-500 mb-8">
+              <h4 class="font-bold text-lg text-blue-800 mb-3"><i class="fas fa-lock mr-2"></i>Private Fields for Data Hiding</h4>
+              <p class="text-gray-700 mb-3">
+                Instance variables are declared as <code>private</code> to prevent direct access from outside the class, ensuring data protection and controlled modification.
+              </p>
+              <div class="code-block text-sm">
+                <pre><code>class BankAccount {
+    private String accountNumber;
+    private double balance;
+    private String accountHolder;
+    
+    // Constructor and methods will provide controlled access
+}</code></pre>
+              </div>
+            </div>
+
+            <div class="concept-card border-l-4 border-green-500 mb-8">
+              <h4 class="font-bold text-lg text-green-800 mb-3"><i class="fas fa-exchange-alt mr-2"></i>Public Getter and Setter Methods</h4>
+              <p class="text-gray-700 mb-3">
+                Getter (accessor) and setter (mutator) methods provide controlled access to private fields, allowing validation and maintaining object consistency.
+              </p>
+              <div class="code-block text-sm">
+                <pre><code>class Person {
+    private String name;
+    private int age;
+    
+    // Getter for name
+    public String getName() {
+        return name;
+    }
+    
+    // Setter for name
+    public void setName(String name) {
+        if (name != null && !name.trim().isEmpty()) {
+            this.name = name;
+        }
+    }
+    
+    // Getter for age
+    public int getAge() {
+        return age;
+    }
+    
+    // Setter for age with validation
+    public void setAge(int age) {
+        if (age >= 0 && age <= 150) {
+            this.age = age;
+        } else {
+            throw new IllegalArgumentException("Invalid age");
+        }
+    }
+}</code></pre>
+              </div>
+            </div>
+
+            <div class="highlight-box">
+              <h4 class="font-bold text-lg mb-3 text-gray-800">Encapsulation Benefits</h4>
+              <div class="grid md:grid-cols-3 gap-4">
+                <div class="text-center">
+                  <i class="fas fa-shield-alt text-3xl text-green-600 mb-2"></i>
+                  <h5 class="font-bold text-green-800 mb-1">Data Integrity</h5>
+                  <p class="text-sm text-gray-700">Ensures data remains valid and consistent through controlled access and validation</p>
+                </div>
+                <div class="text-center">
+                  <i class="fas fa-cogs text-3xl text-blue-600 mb-2"></i>
+                  <h5 class="font-bold text-blue-800 mb-1">Implementation Flexibility</h5>
+                  <p class="text-sm text-gray-700">Allows internal implementation changes without affecting code that uses the class</p>
+                </div>
+                <div class="text-center">
+                  <i class="fas fa-lock text-3xl text-purple-600 mb-2"></i>
+                  <h5 class="font-bold text-purple-800 mb-1">Security</h5>
+                  <p class="text-sm text-gray-700">Prevents unauthorized access to sensitive data and protects against malicious modifications</p>
+                </div>
+              </div>
+              <p class="text-sm text-gray-600 mt-4">Source: <a href="#ref-126" class="citation-link">[126]</a>
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Essential Constructs Section -->
+      <section id="constructs" class="px-8 py-16">
+        <div class="max-w-5xl mx-auto">
+          <div class="flex items-center mb-8">
+            <div class="section-number mr-4">7</div>
+            <h2 class="serif text-4xl font-bold text-gray-800">Essential Java Constructs</h2>
+          </div>
+
+          <div class="concept-card">
+            <p class="text-lg text-gray-700 mb-6">
+              Java provides essential constructs that form the building blocks of applications. Constructors initialize objects, the <code>final</code> keyword defines immutable behavior, and control flow statements like the <code>for</code> loop enable repetitive tasks and complex logic.
+            </p>
+
+            <div class="mermaid-container">
+              <div class="mermaid-controls">
+                <button class="mermaid-control-btn zoom-in" title="放大">
+                  <i class="fas fa-search-plus"></i>
+                </button>
+                <button class="mermaid-control-btn zoom-out" title="缩小">
+                  <i class="fas fa-search-minus"></i>
+                </button>
+                <button class="mermaid-control-btn reset-zoom" title="重置">
+                  <i class="fas fa-expand-arrows-alt"></i>
+                </button>
+                <button class="mermaid-control-btn fullscreen" title="全屏查看">
+                  <i class="fas fa-expand"></i>
+                </button>
+              </div>
+              <div class="mermaid">
+                graph TD
+                A["Java Constructs"] --> B["Constructors"]
+                A --> C["final Keyword"]
+                A --> D["Control Flow"]
+
+                B --> B1["Object Initialization"]
+                B --> B2["Default Constructor"]
+                B --> B3["Parameterized Constructor"]
+                B --> B4["Constructor Chaining"]
+
+                C --> C1["Final Variables"]
+                C --> C2["Final Methods"]
+                C --> C3["Final Classes"]
+
+                D --> D1["Standard for Loop"]
+                D --> D2["Enhanced for Loop"]
+                D --> D3["Nested Loops"]
+              </div>
+            </div>
+
+            <h3 class="serif text-2xl font-bold text-gray-800 mb-4">Constructors</h3>
+            <p class="text-gray-700 mb-6">
+              Constructors are special methods called automatically when objects are created using the <code>new</code> keyword. Their primary purpose is to set the initial state of objects by initializing fields and performing setup operations <a href="#ref-126" class="citation-link">[126]</a>.
+            </p>
+
+            <div class="grid lg:grid-cols-3 gap-6 mb-8">
+              <div class="concept-card border-l-4 border-blue-500">
+                <h4 class="font-bold text-lg text-blue-800 mb-3"><i class="fas fa-play-circle mr-2"></i>Default Constructor</h4>
+                <p class="text-gray-700 mb-3">
+                  A constructor with no parameters. If no constructors are explicitly defined, Java provides a default constructor that initializes fields to default values.
+                </p>
+                <div class="code-block text-sm">
+                  <pre><code>class Person {
+    String name;
+    int age;
+    
+    // Default constructor provided by Java if not defined
+    Person() {
+        // Initializes name to null, age to 0
+    }
+}</code></pre>
+                </div>
+              </div>
+
+              <div class="concept-card border-l-4 border-green-500">
+                <h4 class="font-bold text-lg text-green-800 mb-3"><i class="fas fa-cog mr-2"></i>Parameterized Constructor</h4>
+                <p class="text-gray-700 mb-3">
+                  Constructors with parameters that allow objects to be initialized with specific values when created.
+                </p>
+                <div class="code-block text-sm">
+                  <pre><code>class Person {
+    String name;
+    int age;
+    
+    Person(String name, int age) {
+        this.name = name;
+        this.age = age;
+    }
+}
+
+// Usage
+Person person = new Person("John", 25);</code></pre>
+                </div>
+              </div>
+
+              <div class="concept-card border-l-4 border-purple-500">
+                <h4 class="font-bold text-lg text-purple-800 mb-3"><i class="fas fa-link mr-2"></i>Constructor Chaining</h4>
+                <p class="text-gray-700 mb-3">
+                  One constructor calling another constructor in the same class using <code>this()</code> to avoid code duplication.
+                </p>
+                <div class="code-block text-sm">
+                  <pre><code>class Person {
+    String name;
+    int age;
+    
+    Person(String name) {
+        this(name, 0); // Calls parameterized constructor
+    }
+    
+    Person(String name, int age) {
+        this.name = name;
+        this.age = age;
+    }
+}</code></pre>
+                </div>
+              </div>
+            </div>
+
+            <h3 class="serif text-2xl font-bold text-gray-800 mb-4">The final Keyword</h3>
+            <p class="text-gray-700 mb-6">
+              The <code>final</code> keyword is a non-access modifier that restricts modification of variables, methods, or classes. It's a powerful tool for creating immutable objects and ensuring fixed behavior.
+            </p>
+
+            <div class="grid md:grid-cols-3 gap-6 mb-8">
+              <div class="concept-card border-l-4 border-red-500">
+                <h4 class="font-bold text-lg text-red-800 mb-3"><i class="fas fa-lock mr-2"></i>Final Variables</h4>
+                <p class="text-gray-700 mb-3">
+                  Variables whose values cannot be changed once initialized, commonly used to create constants.
+                </p>
+                <div class="code-block text-sm">
+                  <pre><code>class Constants {
+    static final double PI = 3.14159;
+    final int MAX_SIZE = 100;
+    
+    void method() {
+        final int localConstant = 10;
+        // localConstant = 20; // Error: cannot modify final variable
+    }
+}</code></pre>
+                </div>
+              </div>
+
+              <div class="concept-card border-l-4 border-orange-500">
+                <h4 class="font-bold text-lg text-orange-800 mb-3"><i class="fas fa-ban mr-2"></i>Final Methods</h4>
+                <p class="text-gray-700 mb-3">
+                  Methods that cannot be overridden by subclasses, ensuring consistent behavior across all instances.
+                </p>
+                <div class="code-block text-sm">
+                  <pre><code>class SecurityClass {
+    final void securityCheck() {
+        // Critical security logic that should not be modified
+        // by subclasses
+    }
+}</code></pre>
+                </div>
+              </div>
+
+              <div class="concept-card border-l-4 border-indigo-500">
+                <h4 class="font-bold text-lg text-indigo-800 mb-3"><i class="fas fa-stop-circle mr-2"></i>Final Classes</h4>
+                <p class="text-gray-700 mb-3">
+                  Classes that cannot be extended or subclassed, preventing inheritance. The String class is a famous example.
+                </p>
+                <div class="code-block text-sm">
+                  <pre><code>final class ImmutableClass {
+    // Class implementation
+    // Cannot be extended or subclassed
+}
+
+// class SubClass extends ImmutableClass { 
+//     Error: cannot inherit from final class
+// }</code></pre>
+                </div>
+              </div>
+            </div>
+
+            <h3 class="serif text-2xl font-bold text-gray-800 mb-4">Control Flow: The for Loop</h3>
+            <p class="text-gray-700 mb-6">
+              The <code>for</code> loop is a control flow statement used to iterate over ranges or collections. Java provides both standard and enhanced (for-each) versions for different use cases.
+            </p>
+
+            <div class="grid md:grid-cols-2 gap-6">
+              <div class="concept-card border-l-4 border-teal-500">
+                <h4 class="font-bold text-lg text-teal-800 mb-3"><i class="fas fa-repeat mr-2"></i>Standard for Loop</h4>
+                <p class="text-gray-700 mb-3">
+                  Used when iteration requires explicit control over index variables, such as iterating through arrays or specific ranges.
+                </p>
+                <div class="code-block text-sm">
+                  <pre><code>// Print numbers 1 to 10
+for (int i = 1; i <= 10; i++) {
+    System.out.println(i);
+}
+
+// Iterate through array
+int[] numbers = {1, 2, 3, 4, 5};
+for (int i = 0; i < numbers.length; i++) {
+    System.out.println(numbers[i]);
+}</code></pre>
+                </div>
+              </div>
+
+              <div class="concept-card border-l-4 border-pink-500">
+                <h4 class="font-bold text-lg text-pink-800 mb-3"><i class="fas fa-list mr-2"></i>Enhanced for Loop (for-each)</h4>
+                <p class="text-gray-700 mb-3">
+                  Simplified syntax for iterating over collections and arrays without explicit index management. Available since Java 5.
+                </p>
+                <div class="code-block text-sm">
+                  <pre><code>// Iterate through array
+int[] numbers = {1, 2, 3, 4, 5};
+for (int num : numbers) {
+    System.out.println(num);
+}
+
+// Iterate through collection
+List<String> names = Arrays.asList("Alice", "Bob", "Charlie");
+for (String name : names) {
+    System.out.println(name);
+}</code></pre>
+                </div>
+              </div>
+            </div>
+
+            <div class="highlight-box mt-6">
+              <h4 class="font-bold text-lg mb-3 text-gray-800">Nested for Loops</h4>
+              <p class="text-gray-700 mb-3">
+                for loops can be nested within each other for multi-dimensional iteration, such as processing 2D arrays or creating patterns.
+              </p>
+              <div class="code-block text-sm">
+                <pre><code>// Multiplication table
+for (int i = 1; i <= 10; i++) {
+    for (int j = 1; j <= 10; j++) {
+        System.out.print(i * j + "\t");
+    }
+    System.out.println();
+}
+
+// 2D array processing
+int[][] matrix = {{1, 2}, {3, 4}, {5, 6}};
+for (int i = 0; i < matrix.length; i++) {
+    for (int j = 0; j < matrix[i].length; j++) {
+        System.out.print(matrix[i][j] + " ");
+    }
+    System.out.println();
+}</code></pre>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Strings Section -->
+      <section id="strings" class="px-8 py-16">
+        <div class="max-w-5xl mx-auto">
+          <div class="flex items-center mb-8">
+            <div class="section-number mr-4">8</div>
+            <h2 class="serif text-4xl font-bold text-gray-800">Strings in Java</h2>
+          </div>
+
+          <div class="concept-card">
+            <p class="text-lg text-gray-700 mb-6">
+              Strings are sequences of characters used to represent text in Java. The String class is immutable, meaning once created, its content cannot be changed. This immutability provides security and thread safety benefits but requires alternative approaches for frequent modifications <a href="#ref-65" class="citation-link">[65]</a>
+              <a href="#ref-67" class="citation-link">[67]</a>.
+            </p>
+
+            <div class="mermaid-container">
+              <div class="mermaid-controls">
+                <button class="mermaid-control-btn zoom-in" title="放大">
+                  <i class="fas fa-search-plus"></i>
+                </button>
+                <button class="mermaid-control-btn zoom-out" title="缩小">
+                  <i class="fas fa-search-minus"></i>
+                </button>
+                <button class="mermaid-control-btn reset-zoom" title="重置">
+                  <i class="fas fa-expand-arrows-alt"></i>
+                </button>
+                <button class="mermaid-control-btn fullscreen" title="全屏查看">
+                  <i class="fas fa-expand"></i>
+                </button>
+              </div>
+              <div class="mermaid">
+                graph TD
+                A["Strings in Java"] --> B["Immutable String"]
+                A --> C["Mutable Alternatives"]
+
+                B --> B1["String Class"]
+                B --> B2["String Pool"]
+                B --> B3["Memory Efficiency"]
+                B --> B4["Thread Safety"]
+
+                C --> C1["StringBuilder"]
+                C --> C2["StringBuffer"]
+                
+                C1 --> C1_1["Non-Synchronized"]
+                C1 --> C1_2["High Performance"]
+                C1 --> C1_3["Single-threaded"]
+
+                C2 --> C2_1["Synchronized"]
+                C2 --> C2_2["Thread-Safe"]
+                C2 --> C2_3["Multi-threaded"]
+
+                B2 --> B2_1["String Interning"]
+                B2 --> B2_2["Memory Optimization"]
+              </div>
+            </div>
+
+            <h3 class="serif text-2xl font-bold text-gray-800 mb-4">The Immutable String Class</h3>
+            <p class="text-gray-700 mb-6">
+              The String class is immutable by design, enforced through being declared <code>final</code> and having its internal character array private and final <a href="#ref-74" class="citation-link">[74]</a>. Any operation that appears to modify a string creates a new String object instead <a href="#ref-83" class="citation-link">[83]</a>.
+            </p>
+
+            <div class="grid md:grid-cols-2 gap-6 mb-8">
+              <div class="concept-card border-l-4 border-blue-500">
+                <h4 class="font-bold text-lg text-blue-800 mb-3"><i class="fas fa-quote-right mr-2"></i>String Literals and String Pool</h4>
+                <p class="text-gray-700 mb-3">
+                  String literals are stored in the String Pool for memory efficiency. When a literal is created, JVM checks the pool and returns an existing reference if available <a href="#ref-86" class="citation-link">[86]</a>
+                  <a href="#ref-87" class="citation-link">[87]</a>.
+                </p>
+                <div class="code-block text-sm">
+                  <pre><code>String s1 = "Hello";  // Created in String Pool
+String s2 = "Hello";  // References same object as s1
+String s3 = new String("Hello"); // Created in heap
+
+System.out.println(s1 == s2); // true - same reference
+System.out.println(s1 == s3); // false - different objects
+
+// String interning
+String s4 = s3.intern(); // Returns reference from pool
+System.out.println(s1 == s4); // true</code></pre>
+                </div>
+              </div>
+
+              <div class="concept-card border-l-4 border-green-500">
+                <h4 class="font-bold text-lg text-green-800 mb-3"><i class="fas fa-tools mr-2"></i>Common String Methods</h4>
+                <p class="text-gray-700 mb-3">
+                  The String class provides numerous methods for string manipulation, all returning new String objects due to immutability <a href="#ref-89" class="citation-link">[89]</a>.
+                </p>
+                <div class="bg-green-50 p-4 rounded text-sm text-green-800">
+                  <ul class="list-disc list-inside space-y-1">
+                    <li><code>length()</code> - Returns character count</li>
+                    <li><code>charAt(int index)</code> - Returns character at position</li>
+                    <li><code>substring(int begin, int end)</code> - Returns substring</li>
+                    <li><code>toUpperCase()</code>/<code>toLowerCase()</code> - Case conversion</li>
+                    <li><code>trim()</code> - Removes leading/trailing whitespace</li>
+                    <li><code>equals()</code>/<code>equalsIgnoreCase()</code> - Content comparison</li>
+                    <li><code>contains()</code> - Checks for substring presence</li>
+                    <li><code>split()</code> - Splits string into array</li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+
+            <h3 class="serif text-2xl font-bold text-gray-800 mb-4">Mutable String Alternatives</h3>
+            <p class="text-gray-700 mb-6">
+              For frequent string modifications, Java provides mutable alternatives that modify content in-place without creating new objects, offering better performance for string manipulation operations <a href="#ref-66" class="citation-link">[66]</a>.
+            </p>
+
+            <div class="grid md:grid-cols-2 gap-6 mb-8">
+              <div class="concept-card border-l-4 border-teal-500">
+                <h4 class="font-bold text-lg text-teal-800 mb-3"><i class="fas fa-rocket mr-2"></i>StringBuilder</h4>
+                <p class="text-gray-700 mb-3">
+                  Non-synchronized, high-performance mutable string implementation ideal for single-threaded environments without synchronization overhead <a href="#ref-66" class="citation-link">[66]</a>.
+                </p>
+                <div class="code-block text-sm">
+                  <pre><code>StringBuilder sb = new StringBuilder("Hello");
+sb.append(" World");                // "Hello World"
+sb.insert(5, " Beautiful");         // "Hello Beautiful World"
+sb.replace(6, 15, "Wonderful");     // "Hello Wonderful World"
+sb.delete(6, 16);                   // "Hello World"
+sb.reverse();                       // "dlroW olleH"
+String result = sb.toString();      // Convert to String</code></pre>
+                </div>
+              </div>
+
+              <div class="concept-card border-l-4 border-purple-500">
+                <h4 class="font-bold text-lg text-purple-800 mb-3"><i class="fas fa-shield-alt mr-2"></i>StringBuffer</h4>
+                <p class="text-gray-700 mb-3">
+                  Synchronized, thread-safe mutable string implementation with method-level synchronization for multi-threaded environments <a href="#ref-66" class="citation-link">[66]</a>.
+                </p>
+                <div class="code-block text-sm">
+                  <pre><code>StringBuffer sb = new StringBuffer("Hello");
+sb.append(" World");                // "Hello World"
+sb.insert(5, " Beautiful");         // "Hello Beautiful World"
+sb.replace(6, 15, "Wonderful");     // "Hello Wonderful World"
+sb.delete(6, 16);                   // "Hello World"
+sb.reverse();                       // "dlroW olleH"
+String result = sb.toString();      // Convert to String</code></pre>
+                </div>
+              </div>
+            </div>
+
+            <div class="highlight-box">
+              <h4 class="font-bold text-lg mb-3 text-gray-800">Performance Comparison: String vs StringBuilder vs StringBuffer</h4>
+              <div class="grid md:grid-cols-3 gap-4">
+                <div class="bg-blue-50 p-4 rounded border border-blue-200">
+                  <h5 class="font-bold text-blue-800 mb-2">String</h5>
+                  <ul class="text-sm text-blue-700 list-disc list-inside">
+                    <li>Immutable</li>
+                    <li>Thread-safe (immutability)</li>
+                    <li>Slow for frequent modifications</li>
+                    <li>Creates new objects for modifications</li>
+                  </ul>
+                </div>
+                <div class="bg-green-50 p-4 rounded border border-green-200">
+                  <h5 class="font-bold text-green-800 mb-2">StringBuilder</h5>
+                  <ul class="text-sm text-green-700 list-disc list-inside">
+                    <li>Mutable</li>
+                    <li>Not thread-safe</li>
+                    <li>Fast (no synchronization overhead)</li>
+                    <li>Ideal for single-threaded string manipulation</li>
+                  </ul>
+                </div>
+                <div class="bg-purple-50 p-4 rounded border border-purple-200">
+                  <h5 class="font-bold text-purple-800 mb-2">StringBuffer</h5>
+                  <ul class="text-sm text-purple-700 list-disc list-inside">
+                    <li>Mutable</li>
+                    <li>Thread-safe (synchronized methods)</li>
+                    <li>Slower than StringBuilder</li>
+                    <li>Safe for multi-threaded environments</li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Collections Framework Section -->
+      <section id="collections" class="px-8 py-16 bg-gray-50">
+        <div class="max-w-5xl mx-auto">
+          <div class="flex items-center mb-8">
+            <div class="section-number mr-4">9</div>
+            <h2 class="serif text-4xl font-bold text-gray-800">Java Collections Framework</h2>
+          </div>
+
+          <div class="concept-card">
+            <p class="text-lg text-gray-700 mb-6">
+              The Java Collections Framework provides a unified architecture for representing and manipulating collections of objects. It includes interfaces, implementations, and algorithms for lists, sets, maps, and queues, reducing programming effort while increasing performance and interoperability.
+            </p>
+
+            <div class="mermaid-container">
+              <div class="mermaid-controls">
+                <button class="mermaid-control-btn zoom-in" title="放大">
+                  <i class="fas fa-search-plus"></i>
+                </button>
+                <button class="mermaid-control-btn zoom-out" title="缩小">
+                  <i class="fas fa-search-minus"></i>
+                </button>
+                <button class="mermaid-control-btn reset-zoom" title="重置">
+                  <i class="fas fa-expand-arrows-alt"></i>
+                </button>
+                <button class="mermaid-control-btn fullscreen" title="全屏查看">
+                  <i class="fas fa-expand"></i>
+                </button>
+              </div>
+              <div class="mermaid">
+                graph TD
+                A["Collections Framework"] --> B["Collection Interface"]
+                A --> C["Map Interface"]
+                A --> D["Iterable Interface"]
+
+                B --> B1["List"]
+                B --> B2["Set"]
+                B --> B3["Queue"]
+
+                B1 --> B1_1["ArrayList"]
+                B1 --> B1_2["LinkedList"]
+                B1 --> B1_3["Vector"]
+                B1 --> B1_4["Stack"]
+
+                B2 --> B2_1["HashSet"]
+                B2 --> B2_2["LinkedHashSet"]
+                B2 --> B2_3["TreeSet"]
+
+                B3 --> B3_1["PriorityQueue"]
+                B3 --> B3_2["ArrayDeque"]
+
+                C --> C1["HashMap"]
+                C --> C2["LinkedHashMap"]
+                C --> C3["TreeMap"]
+              </div>
+            </div>
+
+            <h3 class="serif text-2xl font-bold text-gray-800 mb-4">Core Interfaces and Hierarchy</h3>
+            <p class="text-gray-700 mb-6">
+              The Collections Framework is built around core interfaces that define common functionality. The Collection interface is the root, extended by List, Set, and Queue interfaces, while the Map interface represents key-value pairs <a href="#ref-472" class="citation-link">[472]</a>.
+            </p>
+
+            <div class="grid lg:grid-cols-3 gap-6 mb-8">
+              <div class="concept-card border-l-4 border-blue-500">
+                <h4 class="font-bold text-lg text-blue-800 mb-3"><i class="fas fa-list-ul mr-2"></i>List Interface</h4>
+                <p class="text-gray-700 mb-3">
+                  Ordered collections allowing duplicate elements with access by index. Common implementations include ArrayList, LinkedList, and Vector.
+                </p>
+                <div class="bg-blue-50 p-3 rounded text-sm text-blue-800">
+                  <strong>Key Features:</strong> Indexed access, ordered elements, duplicates allowed, dynamic size
+                </div>
+              </div>
+
+              <div class="concept-card border-l-4 border-green-500">
+                <h4 class="font-bold text-lg text-green-800 mb-3"><i class="fas fa-layer-group mr-2"></i>Set Interface</h4>
+                <p class="text-gray-700 mb-3">
+                  Collections of unique elements without duplicates. Common implementations include HashSet, LinkedHashSet, and TreeSet.
+                </p>
+                <div class="bg-green-50 p-3 rounded text-sm text-green-800">
+                  <strong>Key Features:</strong> Unique elements, no duplicates, various ordering options
+                </div>
+              </div>
+
+              <div class="concept-card border-l-4 border-purple-500">
+                <h4 class="font-bold text-lg text-purple-800 mb-3"><i class="fas fa-key mr-2"></i>Map Interface</h4>
+                <p class="text-gray-700 mb-3">
+                  Key-value pair collections where keys must be unique. Common implementations include HashMap, LinkedHashMap, and TreeMap.
+                </p>
+                <div class="bg-purple-50 p-3 rounded text-sm text-purple-800">
+                  <strong>Key Features:</strong> Key-value pairs, unique keys, fast lookup by key
+                </div>
+              </div>
+            </div>
+
+            <h3 class="serif text-2xl font-bold text-gray-800 mb-4">List Interface Implementations</h3>
+            <div class="grid md:grid-cols-2 gap-6 mb-8">
+              <div class="concept-card border-l-4 border-red-500">
+                <h4 class="font-bold text-lg text-red-800 mb-3"><i class="fas fa-th mr-2"></i>ArrayList</h4>
+                <p class="text-gray-700 mb-3">
+                  Dynamic array implementation providing fast random access but slower insertions/deletions in the middle. Not synchronized.
+                </p>
+                <div class="code-block text-sm">
+                  <pre><code>List<String> list = new ArrayList<>();
+list.add("Apple");
+list.add("Banana");
+list.add(1, "Orange"); // Insert at position 1
+String fruit = list.get(0); // Fast access
+list.remove(1); // Remove at position 1</code></pre>
+                </div>
+              </div>
+
+              <div class="concept-card border-l-4 border-blue-500">
+                <h4 class="font-bold text-lg text-blue-800 mb-3"><i class="fas fa-link mr-2"></i>LinkedList</h4>
+                <p class="text-gray-700 mb-3">
+                  Doubly-linked list implementation providing fast insertions/deletions at both ends but slower random access. Not synchronized.
+                </p>
+                <div class="code-block text-sm">
+                  <pre><code>LinkedList<String> list = new LinkedList<>();
+list.addFirst("First");
+list.addLast("Last");
+list.add(1, "Middle");
+String first = list.getFirst();
+String last = list.getLast();
+list.removeFirst();
+list.removeLast();</code></pre>
+                </div>
+              </div>
+            </div>
+
+            <h3 class="serif text-2xl font-bold text-gray-800 mb-4">Set Interface Implementations</h3>
+            <div class="grid md:grid-cols-3 gap-6 mb-8">
+              <div class="concept-card border-l-4 border-green-500">
+                <h4 class="font-bold text-lg text-green-800 mb-3"><i class="fas fa-hashtag mr-2"></i>HashSet</h4>
+                <p class="text-gray-700 mb-3">
+                  Hash table implementation providing constant-time operations but no guaranteed ordering. Not synchronized.
+                </p>
+                <div class="code-block text-sm">
+                  <pre><code>Set<String> set = new HashSet<>();
+set.add("Apple");
+set.add("Banana");
+set.add("Apple"); // Ignored - duplicate
+boolean contains = set.contains("Banana");
+set.remove("Apple");
+int size = set.size(); // 1</code></pre>
+                </div>
+              </div>
+
+              <div class="concept-card border-l-4 border-orange-500">
+                <h4 class="font-bold text-lg text-orange-800 mb-3"><i class="fas fa-sort-numeric-down mr-2"></i>LinkedHashSet</h4>
+                <p class="text-gray-700 mb-3">
+                  Hash table with linked list maintaining insertion order. Provides predictable iteration order. Not synchronized.
+                </p>
+                <div class="code-block text-sm">
+                  <pre><code>Set<String> set = new LinkedHashSet<>();
+set.add("First");
+set.add("Second");
+set.add("Third");
+// Iteration order: First, Second, Third</code></pre>
+                </div>
+              </div>
+
+              <div class="concept-card border-l-4 border-purple-500">
+                <h4 class="font-bold text-lg text-purple-800 mb-3"><i class="fas fa-sort-alpha-down mr-2"></i>TreeSet</h4>
+                <p class="text-gray-700 mb-3">
+                  Red-black tree implementation maintaining elements in sorted order. Provides ordered iteration. Not synchronized.
+                </p>
+                <div class="code-block text-sm">
+                  <pre><code>Set<String> set = new TreeSet<>();
+set.add("Banana");
+set.add("Apple");
+set.add("Orange");
+// Iteration order: Apple, Banana, Orange (sorted)</code></pre>
+                </div>
+              </div>
+            </div>
+
+            <h3 class="serif text-2xl font-bold text-gray-800 mb-4">Queue Interface Implementations</h3>
+            <div class="grid md:grid-cols-2 gap-6">
+              <div class="concept-card border-l-4 border-teal-500">
+                <h4 class="font-bold text-lg text-teal-800 mb-3"><i class="fas fa-sort-amount-up mr-2"></i>PriorityQueue</h4>
+                <p class="text-gray-700 mb-3">
+                  Priority heap implementation where elements are ordered by priority. Highest priority elements are at the head of the queue. Not synchronized.
+                </p>
+                <div class="code-block text-sm">
+                  <pre><code>Queue<Integer> pq = new PriorityQueue<>();
+pq.offer(5);
+pq.offer(1);
+pq.offer(3);
+pq.offer(2);
+
+// Poll returns elements in priority order
+System.out.println(pq.poll()); // 1
+System.out.println(pq.poll()); // 2
+System.out.println(pq.poll()); // 3</code></pre>
+                </div>
+              </div>
+
+              <div class="concept-card border-l-4 border-indigo-500">
+                <h4 class="font-bold text-lg text-indigo-800 mb-3"><i class="fas fa-arrows-alt-h mr-2"></i>ArrayDeque</h4>
+                <p class="text-gray-700 mb-3">
+                  Resizable array implementation of double-ended queue (deque) allowing efficient insertion and removal from both ends. Not synchronized.
+                </p>
+                <div class="code-block text-sm">
+                  <pre><code>Deque<String> deque = new ArrayDeque<>();
+deque.addFirst("First");
+deque.addLast("Last");
+deque.offerFirst("New First");
+deque.offerLast("New Last");
+
+String first = deque.getFirst();
+String last = deque.getLast();
+String removedFirst = deque.removeFirst();
+String removedLast = deque.removeLast();</code></pre>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Error and Exception Handling Section -->
+      <section id="exceptions" class="px-8 py-16">
+        <div class="max-w-5xl mx-auto">
+          <div class="flex items-center mb-8">
+            <div class="section-number mr-4">10</div>
+            <h2 class="serif text-4xl font-bold text-gray-800">Error and Exception Handling</h2>
+          </div>
+
+          <div class="concept-card">
+            <p class="text-lg text-gray-700 mb-6">
+              Error and exception handling is a critical mechanism for writing robust Java applications. It allows programs to detect and respond to errors gracefully using keywords like <code>try</code>, <code>catch</code>, <code>finally</code>, <code>throw</code>, and <code>throws</code>.
+            </p>
+
+            <div class="mermaid-container">
+              <div class="mermaid-controls">
+                <button class="mermaid-control-btn zoom-in" title="放大">
+                  <i class="fas fa-search-plus"></i>
+                </button>
+                <button class="mermaid-control-btn zoom-out" title="缩小">
+                  <i class="fas fa-search-minus"></i>
+                </button>
+                <button class="mermaid-control-btn reset-zoom" title="重置">
+                  <i class="fas fa-expand-arrows-alt"></i>
+                </button>
+                <button class="mermaid-control-btn fullscreen" title="全屏查看">
+                  <i class="fas fa-expand"></i>
+                </button>
+              </div>
+              <div class="mermaid">
+                graph TD
+                A["Java Exception Hierarchy"] --> B["Throwable"]
+                B --> C["Error"]
+                B --> D["Exception"]
+
+                C --> C1["OutOfMemoryError"]
+                C --> C2["StackOverflowError"]
+                C --> C3["VirtualMachineError"]
+
+                D --> D1["RuntimeException"]
+                D --> D2["Checked Exception"]
+
+                D1 --> D1_1["NullPointerException"]
+                D1 --> D1_2["ArrayIndexOutOfBoundsException"]
+                D1 --> D1_3["ArithmeticException"]
+                D1 --> D1_4["IllegalArgumentException"]
+
+                D2 --> D2_1["IOException"]
+                D2 --> D2_2["SQLException"]
+                D2 --> D2_3["ClassNotFoundException"]
+
+                E["Exception Handling"] --> E1["try-catch"]
+                E --> E2["finally"]
+                E --> E3["throw"]
+                E --> E4["throws"]
+
+                F["Custom Exceptions"] --> F1["Extending Exception"]
+                F --> F2["Extending RuntimeException"]
+              </div>
+            </div>
+
+            <h3 class="serif text-2xl font-bold text-gray-800 mb-4">The Java Exception Hierarchy</h3>
+            <p class="text-gray-700 mb-6">
+              All exceptions and errors in Java are subclasses of the Throwable class, which has two main subclasses: Error for serious problems applications shouldn't catch, and Exception for conditions applications should handle.
+            </p>
+
+            <div class="grid lg:grid-cols-3 gap-6 mb-8">
+              <div class="concept-card border-l-4 border-red-500">
+                <h4 class="font-bold text-lg text-red-800 mb-3"><i class="fas fa-exclamation-triangle mr-2"></i>Throwable</h4>
+                <p class="text-gray-700 mb-3">
+                  The root class of all errors and exceptions, providing common methods like getMessage(), getCause(), and printStackTrace().
+                </p>
+                <div class="bg-red-50 p-3 rounded text-sm text-red-800">
+                  <strong>Methods:</strong> getMessage(), getCause(), printStackTrace(), toString()
+                </div>
+              </div>
+
+              <div class="concept-card border-l-4 border-orange-500">
+                <h4 class="font-bold text-lg text-orange-800 mb-3"><i class="fas fa-skull-crossbones mr-2"></i>Error</h4>
+                <p class="text-gray-700 mb-3">
+                  Serious problems that applications shouldn't try to catch, typically indicating system-level issues beyond application control.
+                </p>
+                <div class="bg-orange-50 p-3 rounded text-sm text-orange-800">
+                  <strong>Examples:</strong> OutOfMemoryError, StackOverflowError, VirtualMachineError
+                </div>
+              </div>
+
+              <div class="concept-card border-l-4 border-blue-500">
+                <h4 class="font-bold text-lg text-blue-800 mb-3"><i class="fas fa-exclamation-circle mr-2"></i>Exception</h4>
+                <p class="text-gray-700 mb-3">
+                  Conditions that applications should try to catch and handle, divided into checked and unchecked exceptions.
+                </p>
+                <div class="bg-blue-50 p-3 rounded text-sm text-blue-800">
+                  <strong>Subclasses:</strong> RuntimeException (unchecked), checked exceptions
+                </div>
+              </div>
+            </div>
+
+            <h3 class="serif text-2xl font-bold text-gray-800 mb-4">Checked vs Unchecked Exceptions</h3>
+            <div class="grid md:grid-cols-2 gap-6 mb-8">
+              <div class="concept-card border-l-4 border-green-500">
+                <h4 class="font-bold text-lg text-green-800 mb-3"><i class="fas fa-check-circle mr-2"></i>Checked Exceptions</h4>
+                <p class="text-gray-700 mb-3">
+                  Exceptions checked at compile-time that must be either caught or declared in the method signature using <code>throws</code>.
+                </p>
+                <div class="code-block text-sm">
+                  <pre><code>// Method must declare checked exception
+void readFile() throws IOException {
+    FileReader file = new FileReader("data.txt");
+    // File operations
+}
+
+// Usage requires try-catch or throws declaration
+try {
+    readFile();
+} catch (IOException e) {
+    System.err.println("Error reading file: " + e.getMessage());
+}</code></pre>
+                </div>
+              </div>
+
+              <div class="concept-card border-l-4 border-red-500">
+                <h4 class="font-bold text-lg text-red-800 mb-3"><i class="fas fa-bug mr-2"></i>Unchecked Exceptions</h4>
+                <p class="text-gray-700 mb-3">
+                  Runtime exceptions not checked at compile-time, typically indicating programming errors that should be fixed rather than caught.
+                </p>
+                <div class="code-block text-sm">
+                  <pre><code>// No need to declare unchecked exceptions
+void processArray(int[] array) {
+    // Potential ArrayIndexOutOfBoundsException
+    int value = array[10];
+}
+
+// Usage doesn't require try-catch
+processArray(new int[5]); // Will throw exception</code></pre>
+                </div>
+              </div>
+            </div>
+
+            <h3 class="serif text-2xl font-bold text-gray-800 mb-4">Exception Handling Mechanisms</h3>
+            <div class="grid lg:grid-cols-2 gap-6 mb-8">
+              <div class="concept-card border-l-4 border-blue-500">
+                <h4 class="font-bold text-lg text-blue-800 mb-3"><i class="fas fa-shield-alt mr-2"></i>try-catch Block</h4>
+                <p class="text-gray-700 mb-3">
+                  The primary mechanism for catching and handling exceptions, allowing programs to continue execution even when errors occur.
+                </p>
+                <div class="code-block text-sm">
+                  <pre><code>try {
+    // Risky code that might throw exceptions
+    FileReader file = new FileReader("data.txt");
+    int data = file.read();
+    // Process file
+} catch (FileNotFoundException e) {
+    System.err.println("File not found: " + e.getMessage());
+} catch (IOException e) {
+    System.err.println("I/O error: " + e.getMessage());
+}</code></pre>
+                </div>
+              </div>
+
+              <div class="concept-card border-l-4 border-green-500">
+                <h4 class="font-bold text-lg text-green-800 mb-3"><i class="fas fa-broom mr-2"></i>finally Block</h4>
+                <p class="text-gray-700 mb-3">
+                  Code that always executes regardless of whether an exception occurs, typically used for cleanup operations like closing resources.
+                </p>
+                <div class="code-block text-sm">
+                  <pre><code>try {
+    FileReader file = new FileReader("data.txt");
+    // Process file
+} catch (IOException e) {
+    System.err.println("Error: " + e.getMessage());
+} finally {
+    // Always executed
+    System.out.println("Cleanup operations here");
+    // Close resources
+}</code></pre>
+                </div>
+              </div>
+            </div>
+
+            <div class="grid md:grid-cols-2 gap-6 mb-8">
+              <div class="concept-card border-l-4 border-purple-500">
+                <h4 class="font-bold text-lg text-purple-800 mb-3"><i class="fas fa-exclamation-triangle mr-2"></i>throw Keyword</h4>
+                <p class="text-gray-700 mb-3">
+                  Explicitly throws an exception, allowing programs to create and propagate custom error conditions.
+                </p>
+                <div class="code-block text-sm">
+                  <pre><code>void validateAge(int age) {
+    if (age < 0) {
+        throw new IllegalArgumentException("Age cannot be negative");
+    }
+    if (age > 150) {
+        throw new IllegalArgumentException("Age cannot exceed 150");
+    }
+}</code></pre>
+                </div>
+              </div>
+
+              <div class="concept-card border-l-4 border-orange-500">
+                <h4 class="font-bold text-lg text-orange-800 mb-3"><i class="fas fa-list mr-2"></i>throws Keyword</h4>
+                <p class="text-gray-700 mb-3">
+                  Declares that a method might throw certain exceptions, passing responsibility for handling to the caller.
+                </p>
+                <div class="code-block text-sm">
+                  <pre><code>void readFile() throws IOException, FileNotFoundException {
+    FileReader file = new FileReader("data.txt");
+    // File operations that might throw exceptions
+}
+
+// Caller must handle or declare exceptions
+void processFile() {
+    try {
+        readFile();
+    } catch (IOException e) {
+        System.err.println("Error: " + e.getMessage());
+    }
+}</code></pre>
+                </div>
+              </div>
+            </div>
+
+            <h3 class="serif text-2xl font-bold text-gray-800 mb-4">Creating Custom Exceptions</h3>
+            <p class="text-gray-700 mb-6">
+              Java allows creating custom exceptions by extending the Exception class or its subclasses, enabling applications to define and handle domain-specific error conditions.
+            </p>
+
+            <div class="highlight-box">
+              <h4 class="font-bold text-lg mb-3 text-gray-800">Custom Exception Example</h4>
+              <div class="code-block text-sm">
+                <pre><code>// Custom checked exception
+class InsufficientFundsException extends Exception {
+    private double amount;
+    
+    public InsufficientFundsException(double amount) {
+        super("Insufficient funds: $" + amount + " required");
+        this.amount = amount;
+    }
+    
+    public double getAmount() {
+        return amount;
+    }
+}
+
+// Usage in application code
+class BankAccount {
+    private double balance;
+    
+    public void withdraw(double amount) throws InsufficientFundsException {
+        if (amount > balance) {
+            throw new InsufficientFundsException(amount - balance);
+        }
+        balance -= amount;
+    }
+}
+
+// Handling custom exception
+try {
+    BankAccount account = new BankAccount();
+    account.withdraw(1000.0);
+} catch (InsufficientFundsException e) {
+    System.err.println("Error: " + e.getMessage());
+    System.err.println("Shortage: $" + e.getAmount());
+}</code></pre>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Packages Section -->
+      <section id="packages" class="px-8 py-16 bg-gray-50">
+        <div class="max-w-5xl mx-auto">
+          <div class="flex items-center mb-8">
+            <div class="section-number mr-4">11</div>
+            <h2 class="serif text-4xl font-bold text-gray-800">Packages in Java</h2>
+          </div>
+
+          <div class="concept-card">
+            <p class="text-lg text-gray-700 mb-6">
+              Packages organize related classes and interfaces into logical units, making large applications more manageable and maintainable. They provide namespace control and access protection, preventing naming conflicts while creating modular, secure applications.
+            </p>
+
+            <div class="mermaid-container">
+              <div class="mermaid-controls">
+                <button class="mermaid-control-btn zoom-in" title="放大">
+                  <i class="fas fa-search-plus"></i>
+                </button>
+                <button class="mermaid-control-btn zoom-out" title="缩小">
+                  <i class="fas fa-search-minus"></i>
+                </button>
+                <button class="mermaid-control-btn reset-zoom" title="重置">
+                  <i class="fas fa-expand-arrows-alt"></i>
+                </button>
+                <button class="mermaid-control-btn fullscreen" title="全屏查看">
+                  <i class="fas fa-expand"></i>
+                </button>
+              </div>
+              <div class="mermaid">
+                graph TD
+                A["Java Packages"] --> B["Package Declaration"]
+                A --> C["Import Mechanism"]
+                A --> D["Access Control"]
+                A --> E["Organization"]
+
+                B --> B1["package keyword"]
+                B --> B2["Reverse domain naming"]
+                B --> B3["Directory structure mapping"]
+
+                C --> C1["import statement"]
+                C --> C2["Static imports"]
+                C --> C3["Fully qualified names"]
+
+                D --> D1["Package-private access"]
+                D --> D2["Protected access"]
+                D --> D3["Public access"]
+
+                E --> E1["Modular design"]
+                E --> E2["Namespace control"]
+                E --> E3["Code organization"]
+                E --> E4["Access protection"]
+              </div>
+            </div>
+
+            <h3 class="serif text-2xl font-bold text-gray-800 mb-4">Organizing Code with Packages</h3>
+            <p class="text-gray-700 mb-6">
+              Packages provide a hierarchical way to organize Java code, grouping related classes and interfaces while controlling their visibility and accessibility. The standard naming convention uses reverse domain names to ensure uniqueness.
+            </p>
+
+            <div class="grid md:grid-cols-2 gap-6 mb-8">
+              <div class="concept-card border-l-4 border-blue-500">
+                <h4 class="font-bold text-lg text-blue-800 mb-3"><i class="fas fa-folder-open mr-2"></i>Package Declaration</h4>
+                <p class="text-gray-700 mb-3">
+                  The <code>package</code> statement must be the first line in a Java source file, before any class declarations. It specifies the package to which the file's classes belong.
+                </p>
+                <div class="code-block text-sm">
+                  <pre><code>// Package declaration (must be first line)
+package com.example.myapp;
+
+// Class in the com.example.myapp package
+public class MyClass {
+    // Class implementation
+}
+
+// Another class in the same package
+class HelperClass {
+    // Class implementation
+}</code></pre>
+                </div>
+              </div>
+
+              <div class="concept-card border-l-4 border-green-500">
+                <h4 class="font-bold text-lg text-green-800 mb-3"><i class="fas fa-globe mr-2"></i>Naming Conventions</h4>
+                <p class="text-gray-700 mb-3">
+                  Use reverse domain name notation to ensure package names are unique and avoid conflicts with other organizations' packages.
+                </p>
+                <div class="bg-green-50 p-4 rounded text-sm text-green-800">
+                  <strong>Examples:</strong>
+                  <ul class="list-disc list-inside mt-2">
+                    <li>com.company.project.module</li>
+                    <li>org.apache.commons.lang</li>
+                    <li>javax.servlet.http</li>
+                    <li>java.util.concurrent</li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+
+            <h3 class="serif text-2xl font-bold text-gray-800 mb-4">Accessing Classes from Other Packages</h3>
+            <p class="text-gray-700 mb-6">
+              To use classes from other packages, Java provides import statements and fully qualified names, making it easier to work with external libraries and organize code dependencies.
+            </p>
+
+            <div class="grid md:grid-cols-2 gap-6 mb-8">
+              <div class="concept-card border-l-4 border-purple-500">
+                <h4 class="font-bold text-lg text-purple-800 mb-3"><i class="fas fa-import mr-2"></i>Import Statements</h4>
+                <p class="text-gray-700 mb-3">
+                  The <code>import</code> statement makes classes and interfaces from other packages available without using fully qualified names every time.
+                </p>
+                <div class="code-block text-sm">
+                  <pre><code>// Import single class
+import java.util.ArrayList;
+
+// Import all classes in package
+import java.util.*;
+
+// Static import for static members
+import static java.lang.Math.*;
+
+public class MyClass {
+    public static void main(String[] args) {
+        ArrayList<String> list = new ArrayList<>();
+        double result = sqrt(25); // Using static import
+        System.out.println(result); // 5.0
+    }
+}</code></pre>
+                </div>
+              </div>
+
+              <div class="concept-card border-l-4 border-orange-500">
+                <h4 class="font-bold text-lg text-orange-800 mb-3"><i class="fas fa-signature mr-2"></i>Fully Qualified Names</h4>
+                <p class="text-gray-700 mb-3">
+                  Used to reference classes without importing them, especially useful when dealing with naming conflicts between packages.
+                </p>
+                <div class="code-block text-sm">
+                  <pre><code>// When both java.util.Date and java.sql.Date exist
+import java.util.Date;
+import java.sql.*;
+
+public class DateExample {
+    public static void main(String[] args) {
+        // Use imported Date (java.util.Date)
+        Date utilDate = new Date();
+        
+        // Use fully qualified name for SQL Date
+        java.sql.Date sqlDate = new java.sql.Date(System.currentTimeMillis());
+        
+        System.out.println(utilDate);
+        System.out.println(sqlDate);
+    }
+}</code></pre>
+                </div>
+              </div>
+            </div>
+
+            <div class="highlight-box">
+              <h4 class="font-bold text-lg mb-3 text-gray-800">Package Access Control</h4>
+              <p class="text-gray-700 mb-3">
+                Packages work with access modifiers to control visibility and access between classes. The default access level (package-private) allows access only within the same package.
+              </p>
+              <div class="grid md:grid-cols-2 gap-4">
+                <div class="bg-blue-50 p-4 rounded border border-blue-200">
+                  <h5 class="font-bold text-blue-800 mb-2">Same Package Access</h5>
+                  <div class="code-block text-sm">
+                    <pre><code>// In com.example.myapp
+class PackagePrivateClass {
+    // Accessible only within package
+    void packageMethod() { /* ... */ }
+}
+
+// Also in com.example.myapp
+class AnotherClass {
+    void usePackageAccess() {
+        PackagePrivateClass obj = new PackagePrivateClass();
+        obj.packageMethod(); // OK - same package
+    }
+}</code></pre>
+                  </div>
+                </div>
+                <div class="bg-red-50 p-4 rounded border border-red-200">
+                  <h5 class="font-bold text-red-800 mb-2">Different Package Access</h5>
+                  <div class="code-block text-sm">
+                    <pre><code>// In com.example.other
+import com.example.myapp.*;
+
+class DifferentPackageClass {
+    void tryAccess() {
+        PackagePrivateClass obj = new PackagePrivateClass();
+        // obj.packageMethod(); // Error - not visible
+    }
+}</code></pre>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Multithreading Section -->
+      <section id="multithreading" class="px-8 py-16">
+        <div class="max-w-5xl mx-auto">
+          <div class="flex items-center mb-8">
+            <div class="section-number mr-4">12</div>
+            <h2 class="serif text-4xl font-bold text-gray-800">Multithreading in Java</h2>
+          </div>
+
+          <div class="concept-card">
+            <p class="text-lg text-gray-700 mb-6">
+              Multithreading allows programs to perform multiple tasks concurrently, improving performance and responsiveness. A thread is a lightweight sub-process that can run concurrently with other threads, enabling applications to utilize multi-core processors effectively.
+            </p>
+
+            <div class="mermaid-container">
+              <div class="mermaid-controls">
+                <button class="mermaid-control-btn zoom-in" title="放大">
+                  <i class="fas fa-search-plus"></i>
+                </button>
+                <button class="mermaid-control-btn zoom-out" title="缩小">
+                  <i class="fas fa-search-minus"></i>
+                </button>
+                <button class="mermaid-control-btn reset-zoom" title="重置">
+                  <i class="fas fa-expand-arrows-alt"></i>
+                </button>
+                <button class="mermaid-control-btn fullscreen" title="全屏查看">
+                  <i class="fas fa-expand"></i>
+                </button>
+              </div>
+              <div class="mermaid">
+                graph TD
+                A["Multithreading"] --> B["Thread Creation"]
+                A --> C["Thread Lifecycle"]
+                A --> D["Synchronization"]
+                A --> E["Inter-thread Communication"]
+
+                B --> B1["Extending Thread"]
+                B --> B2["Implementing Runnable"]
+                B --> B3["Lambda Expressions"]
+
+                C --> C1["New"]
+                C --> C2["Runnable"]
+                C --> C3["Running"]
+                C --> C4["Blocked"]
+                C --> C5["Terminated"]
+
+                D --> D1["synchronized Keyword"]
+                D --> D2["Lock Objects"]
+                D --> D3["Atomic Variables"]
+                D --> D4["Race Conditions"]
+
+                E --> E1["wait() / notify()"]
+                E --> E2["Producer-Consumer Pattern"]
+                E --> E3["Thread.join()"]
+                E --> E4["Deadlock Prevention"]
+              </div>
+            </div>
+
+            <h3 class="serif text-2xl font-bold text-gray-800 mb-4">Fundamentals of Concurrency</h3>
+            <p class="text-gray-700 mb-6">
+              Java provides rich APIs for creating and managing threads, with two main approaches: extending the Thread class or implementing the Runnable interface. The Thread class provides thread management methods, while Runnable allows separation of thread logic from thread management.
+            </p>
+
+            <div class="grid md:grid-cols-2 gap-6 mb-8">
+              <div class="concept-card border-l-4 border-blue-500">
+                <h4 class="font-bold text-lg text-blue-800 mb-3"><i class="fas fa-code-branch mr-2"></i>Extending Thread Class</h4>
+                <p class="text-gray-700 mb-3">
+                  Extend the Thread class and override the run() method to define thread behavior. This approach combines thread logic with thread management.
+                </p>
+                <div class="code-block text-sm">
+                  <pre><code>class MyThread extends Thread {
+    @Override
+    public void run() {
+        System.out.println("Thread running: " + getName());
+        // Thread logic here
+        for (int i = 0; i < 5; i++) {
+            System.out.println(getName() + ": " + i);
+            try {
+                Thread.sleep(1000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+}
+
+// Usage
+MyThread thread = new MyThread();
+thread.setName("Worker Thread");
+thread.start(); // Starts the thread</code></pre>
+                </div>
+              </div>
+
+              <div class="concept-card border-l-4 border-green-500">
+                <h4 class="font-bold text-lg text-green-800 mb-3"><i class="fas fa-tasks mr-2"></i>Implementing Runnable</h4>
+                <p class="text-gray-700 mb-3">
+                  Implement the Runnable interface to separate thread logic from thread management, allowing more flexible thread creation and reuse.
+                </p>
+                <div class="code-block text-sm">
+                  <pre><code>class MyRunnable implements Runnable {
+    @Override
+    public void run() {
+        System.out.println("Runnable running: " + 
+            Thread.currentThread().getName());
+        // Thread logic here
+        for (int i = 0; i < 5; i++) {
+            System.out.println(Thread.currentThread().getName() + 
+                ": " + i);
+            try {
+                Thread.sleep(1000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+}
+
+// Usage
+Runnable runnable = new MyRunnable();
+Thread thread = new Thread(runnable);
+thread.setName("Worker Thread");
+thread.start(); // Starts the thread
+
+// Or using lambda expression (Java 8+)
+Runnable lambdaRunnable = () -> {
+    // Thread logic here
+    System.out.println("Lambda thread running");
+};
+new Thread(lambdaRunnable).start();</code></pre>
+                </div>
+              </div>
+            </div>
+
+            <h3 class="serif text-2xl font-bold text-gray-800 mb-4">Thread Lifecycle</h3>
+            <p class="text-gray-700 mb-6">
+              Threads in Java undergo several states during their lifecycle, from creation to termination, with transitions between new, runnable, running, blocked, and terminated states.
+            </p>
+
+            <div class="grid lg:grid-cols-5 gap-4 mb-8">
+              <div class="text-center p-4 bg-blue-50 rounded-lg border border-blue-200">
+                <i class="fas fa-plus-circle text-2xl text-blue-600 mb-2"></i>
+                <h5 class="font-bold text-blue-800">New</h5>
+                <p class="text-sm text-blue-700">Thread created but not started</p>
+              </div>
+              <div class="text-center p-4 bg-green-50 rounded-lg border border-green-200">
+                <i class="fas fa-play-circle text-2xl text-green-600 mb-2"></i>
+                <h5 class="font-bold text-green-800">Runnable</h5>
+                <p class="text-sm text-green-700">Ready to run, waiting for CPU</p>
+              </div>
+              <div class="text-center p-4 bg-purple-50 rounded-lg border border-purple-200">
+                <i class="fas fa-running text-2xl text-purple-600 mb-2"></i>
+                <h5 class="font-bold text-purple-800">Running</h5>
+                <p class="text-sm text-purple-700">Currently executing</p>
+              </div>
+              <div class="text-center p-4 bg-red-50 rounded-lg border border-red-200">
+                <i class="fas fa-pause-circle text-2xl text-red-600 mb-2"></i>
+                <h5 class="font-bold text-red-800">Blocked</h5>
+                <p class="text-sm text-red-700">Waiting for resource or monitor</p>
+              </div>
+              <div class="text-center p-4 bg-gray-100 rounded-lg border border-gray-300">
+                <i class="fas fa-stop-circle text-2xl text-gray-600 mb-2"></i>
+                <h5 class="font-bold text-gray-800">Terminated</h5>
+                <p class="text-sm text-gray-700">Execution completed</p>
+              </div>
+            </div>
+
+            <h3 class="serif text-2xl font-bold text-gray-800 mb-4">Synchronization and Thread Safety</h3>
+            <p class="text-gray-700 mb-6">
+              Synchronization controls access to shared resources in multi-threaded environments, preventing race conditions and ensuring data consistency when multiple threads access the same resources concurrently.
+            </p>
+
+            <div class="grid md:grid-cols-2 gap-6 mb-8">
+              <div class="concept-card border-l-4 border-teal-500">
+                <h4 class="font-bold text-lg text-teal-800 mb-3"><i class="fas fa-lock mr-2"></i>synchronized Keyword</h4>
+                <p class="text-gray-700 mb-3">
+                  The synchronized keyword ensures only one thread can execute a synchronized method or block at a time, providing mutual exclusion.
+                </p>
+                <div class="code-block text-sm">
+                  <pre><code>class Counter {
+    private int count = 0;
+    
+    // Synchronized method
+    public synchronized void increment() {
+        count++;
+    }
+    
+    public synchronized int getCount() {
+        return count;
+    }
+}
+
+// Synchronized block
+class Counter {
+    private int count = 0;
+    private final Object lock = new Object();
+    
+    public void increment() {
+        synchronized(lock) {
+            count++;
+        }
+    }
+}</code></pre>
+                </div>
+              </div>
+
+              <div class="concept-card border-l-4 border-red-500">
+                <h4 class="font-bold text-lg text-red-800 mb-3"><i class="fas fa-exclamation-triangle mr-2"></i>Race Conditions and Deadlocks</h4>
+                <p class="text-gray-700 mb-3">
+                  Race conditions occur when thread execution order affects results. Deadlocks happen when threads wait indefinitely for each other to release resources.
+                </p>
+                <div class="bg-red-50 p-3 rounded text-sm text-red-800">
+                  <strong>Deadlock Example:</strong>
+                  <div class="code-block text-xs mt-2">
+                    <pre><code>// Thread 1
+synchronized(resource1) {
+    synchronized(resource2) {
+        // Do something
+    }
+}
+
+// Thread 2
+synchronized(resource2) {
+    synchronized(resource1) {
+        // Do something
+    }
+}</code></pre>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <h3 class="serif text-2xl font-bold text-gray-800 mb-4">Inter-Thread Communication</h3>
+            <p class="text-gray-700 mb-6">
+              Threads can communicate and coordinate using wait(), notify(), and notifyAll() methods from the Object class, enabling producer-consumer patterns and other coordination mechanisms.
+            </p>
+
+            <div class="highlight-box">
+              <h4 class="font-bold text-lg mb-3 text-gray-800">Producer-Consumer Pattern Example</h4>
+              <p class="text-gray-700 mb-3">
+                The classic producer-consumer problem demonstrates inter-thread communication using wait() and notify() to coordinate buffer access.
+              </p>
+              <div class="code-block text-sm">
+                <pre><code>class Buffer {
+    private final List<Integer> buffer = new ArrayList<>();
+    private final int capacity = 10;
+    
+    public synchronized void produce(int item) throws InterruptedException {
+        while (buffer.size() == capacity) {
+            wait(); // Wait until buffer has space
+        }
+        buffer.add(item);
+        System.out.println("Produced: " + item);
+        notifyAll(); // Notify consumers
+    }
+    
+    public synchronized int consume() throws InterruptedException {
+        while (buffer.isEmpty()) {
+            wait(); // Wait until buffer has items
+        }
+        int item = buffer.remove(0);
+        System.out.println("Consumed: " + item);
+        notifyAll(); // Notify producers
+        return item;
+    }
+}
+
+class Producer implements Runnable {
+    private final Buffer buffer;
+    
+    public Producer(Buffer buffer) {
+        this.buffer = buffer;
+    }
+    
+    @Override
+    public void run() {
+        for (int i = 0; i < 20; i++) {
+            try {
+                buffer.produce(i);
+                Thread.sleep(100);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+}
+
+class Consumer implements Runnable {
+    private final Buffer buffer;
+    
+    public Consumer(Buffer buffer) {
+        this.buffer = buffer;
+    }
+    
+    @Override
+    public void run() {
+        for (int i = 0; i < 20; i++) {
+            try {
+                buffer.consume();
+                Thread.sleep(150);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+}
+
+// Usage
+Buffer buffer = new Buffer();
+Thread producer = new Thread(new Producer(buffer));
+Thread consumer = new Thread(new Consumer(buffer));
+
+producer.start();
+consumer.start();</code></pre>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Footer -->
+      <footer class="bg-gray-900 text-white py-12 px-8">
+        <div class="max-w-5xl mx-auto">
+          <div class="grid md:grid-cols-2 gap-8">
+            <div>
+              <h3 class="serif text-2xl font-bold mb-4">References</h3>
+              <div class="grid grid-cols-2 gap-4 text-sm">
+                <div>
+                  <p id="ref-1">[1] <a href="https://www.wscubetech.com/resources/java/compilation-process" class="citation-link">Wscubetech - Java Compilation Process</a>
+                  </p>
+                  <p id="ref-2">[2] <a href="https://www.geeksforgeeks.org/java/compilation-execution-java-program/" class="citation-link">GeeksforGeeks - Java Compilation and Execution</a>
+                  </p>
+                  <p id="ref-3">[3] <a href="https://www.testingdocs.com/java-compilation-process/" class="citation-link">TestingDocs - Java Compilation Process</a>
+                  </p>
+                  <p id="ref-4">[4] <a href="https://belief-driven-design.com/what-happens-after-compile-java-315fe/" class="citation-link">Belief Driven Design - What Happens After Compile</a>
+                  </p>
+                  <p id="ref-5">[5] <a href="https://medium.com/@alxkm/how-compilation-works-in-java-0ac4d1e95b99" class="citation-link">Medium - How Compilation Works in Java</a>
+                  </p>
+                  <p id="ref-6">[6] <a href="https://www.cs.cornell.edu/courses/JavaAndDS/files/howJavaWorks.pdf" class="citation-link">Cornell - How Java Works</a>
+                  </p>
+                  <p id="ref-7">[7] <a href="https://azure.microsoft.com/en-us/resources/cloud-computing-dictionary/what-is-java-programming-language" class="citation-link">Azure - What is Java Programming Language</a>
+                  </p>
+                  <p id="ref-9">[9] <a href="https://rashm1n.medium.com/how-java-works-demystifying-the-java-virtual-machine-b8adf938bf3" class="citation-link">Medium - How Java Works: Demystifying JVM</a>
+                  </p>
+                  <p id="ref-11">[11] <a href="https://red9systech.com/java-compiler-guide/" class="citation-link">Red9systech - Java Compiler Guide</a>
+                  </p>
+                  <p id="ref-14">[14] <a href="https://smartprogramming.in/tutorials/java/how-java-works" class="citation-link">Smart Programming - How Java Works</a>
+                  </p>
+                  <p id="ref-15">[15] <a href="https://www.knowledgeboat.com/question/describe-the-java-compilation-process-with-a-suitable--28317189245178630" class="citation-link">Knowledge Boat - Java Compilation Process</a>
+                  </p>
+                  <p id="ref-65">[65] <a href="https://dev.to/bharath_vasishtha/understanding-java-strings-a-comprehensive-guide-3k7m" class="citation-link">Dev.to - Understanding Java Strings</a>
+                  </p>
+                  <p id="ref-66">[66] <a href="https://medium.com/@AlexanderObregon/a-beginners-guide-to-java-strings-3485cba0b517" class="citation-link">Medium - Beginner's Guide to Java Strings</a>
+                  </p>
+                  <p id="ref-67">[67] <a href="https://docs.oracle.com/javase/tutorial/java/data/strings.html" class="citation-link">Oracle - Strings</a>
+                  </p>
+                  <p id="ref-71">[71] <a href="https://www.programiz.com/java-programming/string" class="citation-link">Programiz - Java String</a>
+                  </p>
+                  <p id="ref-74">[74] <a href="https://blog.devops.dev/java-internals-string-c3721ed91e6d" class="citation-link">DevOps - Java Internals String</a>
+                  </p>
+                  <p id="ref-78">[78] <a href="https://medium.com/@arpana.godi/memory-allocation-of-strings-in-java-20b5ac07dccb" class="citation-link">Medium - Memory Allocation of Strings</a>
+                  </p>
+                  <p id="ref-83">[83] <a href="https://www.geeksforgeeks.org/java/java-string-is-immutable-what-exactly-is-the-meaning/" class="citation-link">GeeksforGeeks - String Immutability</a>
+                  </p>
+                  <p id="ref-86">[86] <a href="https://www.baeldung.com/java-string-pool" class="citation-link">Baeldung - Java String Pool</a>
+                  </p>
+                  <p id="ref-87">[87] <a href="https://medium.com/@kamran.babayevv/string-pool-in-java-d505753a494d" class="citation-link">Medium - String Pool in Java</a>
+                  </p>
+                  <p id="ref-89">[89] <a href="https://www.geeksforgeeks.org/java/java-string-methods/" class="citation-link">GeeksforGeeks - Java String Methods</a>
+                  </p>
+                  <p id="ref-126">[126] <a href="https://www.geeksforgeeks.org/java/encapsulation-in-java/" class="citation-link">GeeksforGeeks - Encapsulation in Java</a>
+                  </p>
+                  <p id="ref-265">[265] <a href="https://www3.ntu.edu.sg/home/ehchua/programming/java/J3a_OOPBasics.html" class="citation-link">NTU - Java OOP Basics</a>
+                  </p>
+                  <p id="ref-295">[295] <a href="https://medium.com/@ntiinsd/java-inheritance-the-definitive-guide-with-code-benchmarks-and-diagrams-a87241815048" class="citation-link">Medium - Java Inheritance Guide</a>
+                  </p>
+                  <p id="ref-296">[296] <a href="https://www.geeksforgeeks.org/java/interfaces-and-inheritance-in-java/" class="citation-link">GeeksforGeeks - Interfaces and Inheritance</a>
+                  </p>
+                  <p id="ref-297">[297] <a href="https://www3.ntu.edu.sg/home/ehchua/programming/java/J3b_OOPInheritancePolymorphism.html" class="citation-link">NTU - Inheritance and Polymorphism</a>
+                  </p>
+                  <p id="ref-299">[299] <a href="https://www.programiz.com/java-programming/inheritance" class="citation-link">Programiz - Java Inheritance</a>
+                  </p>
+                  <p id="ref-300">[300] <a href="https://www.programiz.com/java-programming/polymorphism" class="citation-link">Programiz - Java Polymorphism</a>
+                  </p>
+                  <p id="ref-304">[304] <a href="https://dev.to/sundar_joseph_94059a3e7a6/abstraction-in-java-30b7" class="citation-link">Dev.to - Abstraction in Java</a>
+                  </p>
+                  <p id="ref-305">[305] <a href="https://blog.nashtechglobal.com/abstraction-in-java/" class="citation-link">NashTech - Abstraction in Java</a>
+                  </p>
+                  <p id="ref-306">[306] <a href="https://www.geeksforgeeks.org/java/abstraction-in-java-2/" class="citation-link">GeeksforGeeks - Abstraction in Java</a>
+                  </p>
+                  <p id="ref-308">[308] <a href="https://www.softwaretestinghelp.com/encapsulation-in-java/" class="citation-link">Software Testing Help - Encapsulation</a>
+                  </p>
+                  <p id="ref-310">[310] <a href="https://www.datacamp.com/doc/java/encapsulation" class="citation-link">DataCamp - Encapsulation</a>
+                  </p>
+                  <p id="ref-312">[312] <a href="https://www.geeksforgeeks.org/java/object-oriented-programming-oops-concept-in-java/" class="citation-link">GeeksforGeeks - OOP in Java</a>
+                  </p>
+                  <p id="ref-313">[313] <a href="https://www.mygreatlearning.com/blog/oops-concepts-in-java/" class="citation-link">Great Learning - OOP Concepts</a>
+                  </p>
+                  <p id="ref-314">[314] <a href="https://stackify.com/oops-concepts-in-java/" class="citation-link">Stackify - OOP Concepts</a>
+                  </p>
+                  <p id="ref-325">[325] <a href="https://www.tutorialspoint.com/java/java_oops_concepts.htm" class="citation-link">TutorialsPoint - OOP Concepts</a>
+                  </p>
+                  <p id="ref-326">[326] <a href="https://raygun.com/blog/oop-concepts-java/" class="citation-link">Raygun - OOP Concepts Java</a>
+                  </p>
+                  <p id="ref-333">[333] <a href="https://www.errormakesclever.com/blog/polymorphism-in-java" class="citation-link">Error Makes Clever - Polymorphism</a>
+                  </p>
+                  <p id="ref-334">[334] <a href="https://www.geeksforgeeks.org/java/polymorphism-in-java/" class="citation-link">GeeksforGeeks - Polymorphism</a>
+                  </p>
+                  <p id="ref-340">[340] <a href="https://www.geeksforgeeks.org/java/encapsulation-in-java/" class="citation-link">GeeksforGeeks - Encapsulation</a>
+                  </p>
+                  <p id="ref-355">[355] <a href="https://dev.to/mspilari/understanding-the-four-pillars-of-oop-a-guide-to-object-oriented-programming-4kl4" class="citation-link">Dev.to - Four Pillars of OOP</a>
+                  </p>
+                  <p id="ref-361">[361] <a href="https://www.geeksforgeeks.org/java/abstraction-in-java-2/" class="citation-link">GeeksforGeeks - Abstraction</a>
+                  </p>
+                  <p id="ref-391">[391] <a href="https://www.geeksforgeeks.org/java/polymorphism-in-java/" class="citation-link">GeeksforGeeks - Polymorphism</a>
+                  </p>
+                  <p id="ref-472">[472] <a href="https://www.geeksforgeeks.org/java/access-modifiers-java/" class="citation-link">GeeksforGeeks - Access Modifiers</a>
+                  </p>
+                  <p id="ref-473">[473] <a href="https://payilagam.com/java/access-modifiers-or-access-specifiers/" class="citation-link">Payilagam - Access Modifiers</a>
+                  </p>
+                  <p id="ref-474">[474] <a href="https://medium.com/@utkuguner/access-modifiers-in-java-8609167a3d9b" class="citation-link">Medium - Access Modifiers</a>
+                  </p>
+                  <p id="ref-481">[481] <a href="https://abhiandroid.com/java/access-modifiers" class="citation-link">AbhiAndroid - Access Modifiers</a>
+                  </p>
+                  <p id="ref-482">[482] <a href="https://www.scientecheasy.com/2020/06/access-modifiers-in-java.html/" class="citation-link">Science Tech Easy - Access Modifiers</a>
+                  </p>
+                </div>
+                <p class="text-sm text-gray-400 mt-4">
+                  This comprehensive guide is designed to provide a deep understanding of core Java concepts from compilation to advanced topics like multithreading and collections. Each section builds upon fundamental principles to create a complete picture of Java programming.
+                </p>
+              </div>
+            </div>
+      </footer>
+    </div>
+
+    <script>
+// Initialize Mermaid
+mermaid.initialize({ 
+    startOnLoad: true,
+    theme: 'base',
+    themeVariables: {
+        // Primary colors with better contrast
+        primaryColor: '#3b82f6',
+        primaryTextColor: '#ffffff',
+        primaryBorderColor: '#1e40af',
+        
+        // Secondary colors
+        secondaryColor: '#10b981',
+        secondaryTextColor: '#ffffff',
+        secondaryBorderColor: '#047857',
+        
+        // Tertiary colors
+        tertiaryColor: '#8b5cf6',
+        tertiaryTextColor: '#ffffff',
+        tertiaryBorderColor: '#6b21a8',
+        
+        // Additional node colors with proper contrast
+        primaryColorLight: '#93c5fd',
+        primaryColorDark: '#1e40af',
+        secondaryColorLight: '#6ee7b7',
+        secondaryColorDark: '#047857',
+        tertiaryColorLight: '#c4b5fd',
+        tertiaryColorDark: '#6b21a8',
+        
+        // Background and edges
+        background: '#ffffff',
+        mainBkg: '#3b82f6',
+        secondaryBkg: '#10b981',
+        tertiaryBkg: '#8b5cf6',
+        lineColor: '#4b5563',
+        
+        // Text colors for different backgrounds
+        textColor: '#1f2937',
+        darkTextColor: '#ffffff',
+        
+        // Node colors with high contrast text
+        cScale0: '#3b82f6',  // Blue - white text
+        cScale1: '#10b981',  // Green - white text
+        cScale2: '#8b5cf6',  // Purple - white text
+        cScale3: '#f59e0b',  // Amber - dark text
+        cScale4: '#ef4444',  // Red - white text
+        cScale5: '#06b6d4',  // Cyan - white text
+        cScale6: '#84cc16',  // Lime - dark text
+        cScale7: '#06b6d4',  // Sky - white text
+        
+        // Ensure text visibility on all backgrounds
+        c0TextColor: '#ffffff',
+        c1TextColor: '#ffffff', 
+        c2TextColor: '#ffffff',
+        c3TextColor: '#1f2937',
+        c4TextColor: '#ffffff',
+        c5TextColor: '#ffffff',
+        c6TextColor: '#1f2937',
+        c7TextColor: '#ffffff'
+    },
+    flowchart: {
+        useMaxWidth: false,
+        htmlLabels: true,
+        curve: 'basis',
+        padding: 20
+    },
+    fontFamily: 'Inter, sans-serif',
+    fontSize: 14
+});
+
+// Initialize Mermaid Controls for zoom and pan
+function initializeMermaidControls() {
+    const containers = document.querySelectorAll('.mermaid-container');
+
+    containers.forEach(container => {
+    const mermaidElement = container.querySelector('.mermaid');
+    let scale = 1;
+    let isDragging = false;
+    let startX, startY, translateX = 0, translateY = 0;
+
+    // 触摸相关状态
+    let isTouch = false;
+    let touchStartTime = 0;
+    let initialDistance = 0;
+    let initialScale = 1;
+    let isPinching = false;
+
+    // Zoom controls
+    const zoomInBtn = container.querySelector('.zoom-in');
+    const zoomOutBtn = container.querySelector('.zoom-out');
+    const resetBtn = container.querySelector('.reset-zoom');
+    const fullscreenBtn = container.querySelector('.fullscreen');
+
+    function updateTransform() {
+        mermaidElement.style.transform = `translate(${translateX}px, ${translateY}px) scale(${scale})`;
+
+        if (scale > 1) {
+        container.classList.add('zoomed');
+        } else {
+        container.classList.remove('zoomed');
+        }
+
+        mermaidElement.style.cursor = isDragging ? 'grabbing' : 'grab';
+    }
+
+    if (zoomInBtn) {
+        zoomInBtn.addEventListener('click', () => {
+        scale = Math.min(scale * 1.25, 4);
+        updateTransform();
+        });
+    }
+
+    if (zoomOutBtn) {
+        zoomOutBtn.addEventListener('click', () => {
+        scale = Math.max(scale / 1.25, 0.3);
+        if (scale <= 1) {
+            translateX = 0;
+            translateY = 0;
+        }
+        updateTransform();
+        });
+    }
+
+    if (resetBtn) {
+        resetBtn.addEventListener('click', () => {
+        scale = 1;
+        translateX = 0;
+        translateY = 0;
+        updateTransform();
+        });
+    }
+
+    if (fullscreenBtn) {
+        fullscreenBtn.addEventListener('click', () => {
+        if (container.requestFullscreen) {
+            container.requestFullscreen();
+        } else if (container.webkitRequestFullscreen) {
+            container.webkitRequestFullscreen();
+        } else if (container.msRequestFullscreen) {
+            container.msRequestFullscreen();
+        }
+        });
+    }
+
+    // Mouse Events
+    mermaidElement.addEventListener('mousedown', (e) => {
+        if (isTouch) return; // 如果是触摸设备，忽略鼠标事件
+
+        isDragging = true;
+        startX = e.clientX - translateX;
+        startY = e.clientY - translateY;
+        mermaidElement.style.cursor = 'grabbing';
+        updateTransform();
+        e.preventDefault();
+    });
+
+    document.addEventListener('mousemove', (e) => {
+        if (isDragging && !isTouch) {
+        translateX = e.clientX - startX;
+        translateY = e.clientY - startY;
+        updateTransform();
+        }
+    });
+
+    document.addEventListener('mouseup', () => {
+        if (isDragging && !isTouch) {
+        isDragging = false;
+        mermaidElement.style.cursor = 'grab';
+        updateTransform();
+        }
+    });
+
+    document.addEventListener('mouseleave', () => {
+        if (isDragging && !isTouch) {
+        isDragging = false;
+        mermaidElement.style.cursor = 'grab';
+        updateTransform();
+        }
+    });
+
+    // 获取两点之间的距离
+    function getTouchDistance(touch1, touch2) {
+        return Math.hypot(
+        touch2.clientX - touch1.clientX,
+        touch2.clientY - touch1.clientY
+        );
+    }
+
+    // Touch Events 
+    mermaidElement.addEventListener('touchstart', (e) => {
+        isTouch = true;
+        touchStartTime = Date.now();
+
+        if (e.touches.length === 1) {
+        // 单指拖动
+        isPinching = false;
+        isDragging = true;
+
+        const touch = e.touches[0];
+        startX = touch.clientX - translateX;
+        startY = touch.clientY - translateY;
+
+        } else if (e.touches.length === 2) {
+        // 双指缩放
+        isPinching = true;
+        isDragging = false;
+
+        const touch1 = e.touches[0];
+        const touch2 = e.touches[1];
+        initialDistance = getTouchDistance(touch1, touch2);
+        initialScale = scale;
+        }
+
+        e.preventDefault();
+    }, { passive: false });
+
+    mermaidElement.addEventListener('touchmove', (e) => {
+        if (e.touches.length === 1 && isDragging && !isPinching) {
+        // 单指拖动
+        const touch = e.touches[0];
+        translateX = touch.clientX - startX;
+        translateY = touch.clientY - startY;
+        updateTransform();
+
+        } else if (e.touches.length === 2 && isPinching) {
+        // 双指缩放
+        const touch1 = e.touches[0];
+        const touch2 = e.touches[1];
+        const currentDistance = getTouchDistance(touch1, touch2);
+
+        if (initialDistance > 0) {
+            const newScale = Math.min(Math.max(
+            initialScale * (currentDistance / initialDistance),
+            0.3
+            ), 4);
+            scale = newScale;
+            updateTransform();
+        }
+        }
+
+        e.preventDefault();
+    }, { passive: false });
+
+    mermaidElement.addEventListener('touchend', (e) => {
+        // 重置状态
+        if (e.touches.length === 0) {
+        isDragging = false;
+        isPinching = false;
+        initialDistance = 0;
+
+        // 延迟重置isTouch，避免鼠标事件立即触发
+        setTimeout(() => {
+            isTouch = false;
+        }, 100);
+        } else if (e.touches.length === 1 && isPinching) {
+        // 从双指变为单指，切换为拖动模式
+        isPinching = false;
+        isDragging = true;
+
+        const touch = e.touches[0];
+        startX = touch.clientX - translateX;
+        startY = touch.clientY - translateY;
+        }
+
+        updateTransform();
+    });
+
+    mermaidElement.addEventListener('touchcancel', (e) => {
+        isDragging = false;
+        isPinching = false;
+        initialDistance = 0;
+
+        setTimeout(() => {
+        isTouch = false;
+        }, 100);
+
+        updateTransform();
+    });
+
+    // Enhanced wheel zoom with better center point handling
+    container.addEventListener('wheel', (e) => {
+        e.preventDefault();
+        const rect = container.getBoundingClientRect();
+        const centerX = rect.width / 2;
+        const centerY = rect.height / 2;
+
+        const delta = e.deltaY > 0 ? 0.9 : 1.1;
+        const newScale = Math.min(Math.max(scale * delta, 0.3), 4);
+
+        // Adjust translation to zoom towards center
+        if (newScale !== scale) {
+        const scaleDiff = newScale / scale;
+        translateX = translateX * scaleDiff;
+        translateY = translateY * scaleDiff;
+        scale = newScale;
+
+        if (scale <= 1) {
+            translateX = 0;
+            translateY = 0;
+        }
+
+        updateTransform();
+        }
+    });
+
+    // Initialize display
+    updateTransform();
+    });
+}
+
+// Smooth scrolling for TOC links
+document.querySelectorAll('.toc-link').forEach(link => {
+    link.addEventListener('click', function(e) {
+        e.preventDefault();
+        const targetId = this.getAttribute('href').substring(1);
+        const targetElement = document.getElementById(targetId);
+        if (targetElement) {
+            targetElement.scrollIntoView({
+                behavior: 'smooth',
+                block: 'start'
+            });
+            
+            // Update active link
+            document.querySelectorAll('.toc-link').forEach(l => l.classList.remove('active'));
+            this.classList.add('active');
+        }
+    });
+});
+
+// Update active TOC link on scroll
+window.addEventListener('scroll', function() {
+    const sections = document.querySelectorAll('section[id]');
+    const tocLinks = document.querySelectorAll('.toc-link');
+    
+    let current = '';
+    sections.forEach(section => {
+        const sectionTop = section.offsetTop;
+        const sectionHeight = section.clientHeight;
+        if (scrollY >= (sectionTop - 200)) {
+            current = section.getAttribute('id');
+        }
+    });
+    
+    tocLinks.forEach(link => {
+        link.classList.remove('active');
+        if (link.getAttribute('href') === '#' + current) {
+            link.classList.add('active');
+        }
+    });
+});
+
+// Initialize Mermaid controls
+initializeMermaidControls();
+</script>
+  </body>
+
+</html>
