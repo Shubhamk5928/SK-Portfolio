@@ -52,11 +52,17 @@ const ResourceCard = ({
           speed: 450,
         }}
         className="bg-tertiary p-5 rounded-2xl sm:w-[360px] w-full cursor-pointer"
-        onClick={() => {
-          console.log('Card clicked, navigating to:', link);
-          window.location.href = link;
-        }}
       >
+        <div 
+          onClick={(e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            console.log('Card clicked, navigating to:', link);
+            alert('Card clicked! Opening: ' + link);
+            window.open(link, '_blank');
+          }}
+          className="w-full h-full hover:opacity-90 transition-opacity duration-200"
+        >
         <div className="relative w-full h-[200px] flex items-center justify-center">
           <div className="text-6xl mb-4">{icon}</div>
         </div>
@@ -92,6 +98,7 @@ const ResourceCard = ({
               d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" 
             />
           </svg>
+        </div>
         </div>
       </Tilt>
     </div>
@@ -132,7 +139,7 @@ const Resources = () => {
         { name: "Algorithms", color: "text-green-400" },
         { name: "Data Structures", color: "text-purple-400" },
       ],
-      link: "/resource/javanotesfordsa.html",
+      link: "/resources/javanotesfordsa.html",
       icon: "☕",
     },
   ];
