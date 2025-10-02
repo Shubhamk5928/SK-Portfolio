@@ -1,6 +1,7 @@
 import React from "react";
 import { motion } from "framer-motion";
-import { FaInstagram, FaXTwitter, FaLinkedin } from "react-icons/fa6";
+import { FaInstagram, FaXTwitter, FaLinkedin, FaGithub } from "react-icons/fa6";
+import { SiLeetcode } from "react-icons/si";
 
 const Footer = () => {
   const currentYear = new Date().getFullYear();
@@ -23,6 +24,18 @@ const Footer = () => {
       href: "https://www.linkedin.com/in/Shubhamk5928/",
       label: "LinkedIn",
       color: "hover:text-blue-400"
+    },
+    {
+      icon: FaGithub,
+      href: "https://github.com/Shubhamk5928/",
+      label: "GitHub",
+      color: "hover:text-gray-200"
+    },
+    {
+      icon: SiLeetcode,
+      href: "https://leetcode.com/u/shubhamk5928/",
+      label: "LeetCode",
+      color: "hover:text-orange-400"
     }
   ];
 
