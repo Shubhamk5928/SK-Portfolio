@@ -1,0 +1,2421 @@
+<!DOCTYPE html><html lang="en"><head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>The Backend Engineer&#39;s Guide to Networking</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Crimson+Text:ital,wght@0,400;0,600;1,400&amp;family=Inter:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet"/>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"/>
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@10.6.1/dist/mermaid.min.js"></script>
+    <style>
+        :root {
+            --primary: #1e293b;
+            --secondary: #64748b;
+            --accent: #3b82f6;
+            --muted: #f8fafc;
+            --border: #e2e8f0;
+        }
+        
+        .font-serif { font-family: 'Crimson Text', serif; }
+        .font-sans { font-family: 'Inter', sans-serif; }
+        
+        .hero-gradient {
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #334155 100%);
+        }
+        
+        .glass-effect {
+            backdrop-filter: blur(10px);
+            background: rgba(255, 255, 255, 0.95);
+        }
+        
+        .toc-fixed {
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 100vh;
+            width: 280px;
+            overflow-y: auto;
+            z-index: 1000;
+            border-right: 1px solid var(--border);
+        }
+        
+        .content-offset {
+            margin-left: 280px;
+        }
+        
+        .section-spacing {
+            scroll-margin-top: 2rem;
+        }
+        
+        .citation-link {
+            color: var(--accent);
+            text-decoration: none;
+            font-weight: 500;
+            border-bottom: 1px solid transparent;
+            transition: border-color 0.2s ease;
+        }
+        
+        .citation-link:hover {
+            border-bottom-color: var(--accent);
+        }
+        
+        .network-card {
+            background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+            border-left: 4px solid var(--accent);
+        }
+        
+        .protocol-badge {
+            background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+        }
+        
+        /* Mermaid diagram styling */
+        .mermaid-container {
+            display: flex;
+            justify-content: center;
+            min-height: 300px;
+            max-height: 800px;
+            background: #ffffff;
+            border: 2px solid #e5e7eb;
+            border-radius: 12px;
+            padding: 30px;
+            margin: 30px 0;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.08);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .mermaid-container .mermaid {
+            width: 100%;
+            max-width: 100%;
+            height: 100%;
+            cursor: grab;
+            transition: transform 0.3s ease;
+            transform-origin: center center;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            touch-action: none; /* 防止触摸设备上的默认行为 */
+            -webkit-user-select: none; /* 防止文本选择 */
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+        }
+
+        .mermaid-container .mermaid svg {
+            max-width: 100%;
+            height: 100%;
+            display: block;
+            margin: 0 auto;
+        }
+
+        .mermaid-container .mermaid:active {
+            cursor: grabbing;
+        }
+
+        .mermaid-container.zoomed .mermaid {
+            height: 100%;
+            width: 100%;
+            cursor: grab;
+        }
+
+        .mermaid-controls {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            display: flex;
+            gap: 10px;
+            z-index: 20;
+            background: rgba(255, 255, 255, 0.95);
+            padding: 8px;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .mermaid-control-btn {
+            background: #ffffff;
+            border: 1px solid #d1d5db;
+            border-radius: 6px;
+            padding: 10px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            color: #374151;
+            font-size: 14px;
+            min-width: 36px;
+            height: 36px;
+            text-align: center;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .mermaid-control-btn:hover {
+            background: #f8fafc;
+            border-color: #3b82f6;
+            color: #3b82f6;
+            transform: translateY(-1px);
+        }
+
+        .mermaid-control-btn:active {
+            transform: scale(0.95);
+        }
+
+        /* Custom Mermaid theme for better contrast */
+        .mermaid .node rect,
+        .mermaid .node circle,
+        .mermaid .node ellipse,
+        .mermaid .node polygon {
+            fill: #ffffff !important;
+            stroke: #1e293b !important;
+            stroke-width: 2px !important;
+            filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.1)) !important;
+        }
+        
+        /* Different node colors with good contrast */
+        .mermaid .node:nth-child(7n+1) rect,
+        .mermaid .node:nth-child(7n+1) circle,
+        .mermaid .node:nth-child(7n+1) ellipse,
+        .mermaid .node:nth-child(7n+1) polygon {
+            fill: #fef3c7 !important;
+            stroke: #d97706 !important;
+        }
+        
+        .mermaid .node:nth-child(7n+2) rect,
+        .mermaid .node:nth-child(7n+2) circle,
+        .mermaid .node:nth-child(7n+2) ellipse,
+        .mermaid .node:nth-child(7n+2) polygon {
+            fill: #dbeafe !important;
+            stroke: #2563eb !important;
+        }
+        
+        .mermaid .node:nth-child(7n+3) rect,
+        .mermaid .node:nth-child(7n+3) circle,
+        .mermaid .node:nth-child(7n+3) ellipse,
+        .mermaid .node:nth-child(7n+3) polygon {
+            fill: #d1fae5 !important;
+            stroke: #059669 !important;
+        }
+        
+        .mermaid .node:nth-child(7n+4) rect,
+        .mermaid .node:nth-child(7n+4) circle,
+        .mermaid .node:nth-child(7n+4) ellipse,
+        .mermaid .node:nth-child(7n+4) polygon {
+            fill: #fce7f3 !important;
+            stroke: #ec4899 !important;
+        }
+        
+        .mermaid .node:nth-child(7n+5) rect,
+        .mermaid .node:nth-child(7n+5) circle,
+        .mermaid .node:nth-child(7n+5) ellipse,
+        .mermaid .node:nth-child(7n+5) polygon {
+            fill: #e0e7ff !important;
+            stroke: #6366f1 !important;
+        }
+        
+        .mermaid .node:nth-child(7n+6) rect,
+        .mermaid .node:nth-child(7n+6) circle,
+        .mermaid .node:nth-child(7n+6) ellipse,
+        .mermaid .node:nth-child(7n+6) polygon {
+            fill: #f3e8ff !important;
+            stroke: #9333ea !important;
+        }
+        
+        .mermaid .node:nth-child(7n+7) rect,
+        .mermaid .node:nth-child(7n+7) circle,
+        .mermaid .node:nth-child(7n+7) ellipse,
+        .mermaid .node:nth-child(7n+7) polygon {
+            fill: #fed7d7 !important;
+            stroke: #e53e3e !important;
+        }
+        
+        .mermaid .node .label {
+            color: #1f2937 !important;
+            font-weight: 600 !important;
+            font-size: 14px !important;
+            font-family: 'Inter', sans-serif !important;
+            text-shadow: 0 1px 2px rgba(255, 255, 255, 0.8) !important;
+        }
+        
+        .mermaid .edgePath .path {
+            stroke: #4b5563 !important;
+            stroke-width: 2px !important;
+            filter: drop-shadow(0 1px 1px rgba(0, 0, 0, 0.1)) !important;
+        }
+        
+        .mermaid .edgeLabel {
+            background-color: #ffffff !important;
+            color: #374151 !important;
+            font-weight: 500 !important;
+            font-size: 12px !important;
+            font-family: 'Inter', sans-serif !important;
+            border: 1px solid #d1d5db !important;
+            border-radius: 4px !important;
+            padding: 2px 6px !important;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1) !important;
+        }
+        
+        @media (max-width: 1024px) {
+            .toc-fixed {
+                display: none;
+            }
+            .content-offset {
+                margin-left: 0;
+            }
+            .mermaid-control-btn:not(.reset-zoom) {
+                display: none;
+            }
+            .mermaid-controls {
+                top: auto;
+                bottom: 15px;
+                right: 15px;
+            }
+        }
+    </style>
+  <base target="_blank">
+</head>
+
+  <body class="bg-slate-50 font-sans text-slate-700 leading-relaxed">
+
+    <!-- Fixed Table of Contents -->
+    <nav class="toc-fixed glass-effect p-6">
+      <div class="mb-8">
+        <h2 class="font-serif font-semibold text-lg text-slate-800 mb-2">Contents</h2>
+        <div class="h-px bg-gradient-to-r from-blue-500 to-transparent"></div>
+      </div>
+
+      <ul class="space-y-3 text-sm">
+        <li>
+          <a href="#foundation" class="block py-2 px-3 rounded-lg hover:bg-slate-100 transition-colors text-slate-600 hover:text-slate-800">1. Network Foundation</a>
+        </li>
+        <li>
+          <a href="#transport" class="block py-2 px-3 rounded-lg hover:bg-slate-100 transition-colors text-slate-600 hover:text-slate-800">2. Transport Layer</a>
+        </li>
+        <li>
+          <a href="#application" class="block py-2 px-3 rounded-lg hover:bg-slate-100 transition-colors text-slate-600 hover:text-slate-800">3. Application Layer</a>
+        </li>
+        <li>
+          <a href="#network-layer" class="block py-2 px-3 rounded-lg hover:bg-slate-100 transition-colors text-slate-600 hover:text-slate-800">4. Network Layer</a>
+        </li>
+        <li>
+          <a href="#scaling" class="block py-2 px-3 rounded-lg hover:bg-slate-100 transition-colors text-slate-600 hover:text-slate-800">5. Scaling &amp; Security</a>
+        </li>
+        <li>
+          <a href="#interview" class="block py-2 px-3 rounded-lg hover:bg-slate-100 transition-colors text-slate-600 hover:text-slate-800">6. Interview Questions</a>
+        </li>
+        <li>
+          <a href="#resources" class="block py-2 px-3 rounded-lg hover:bg-slate-100 transition-colors text-slate-600 hover:text-slate-800">7. Learning Resources</a>
+        </li>
+      </ul>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="content-offset">
+
+      <!-- Hero Section -->
+      <section class="hero-gradient min-h-screen flex items-center relative overflow-hidden">
+        <div class="absolute inset-0 opacity-10">
+          <img src="https://kimi-web-img.moonshot.cn/img/cacm.acm.org/ff8c42a14cf94f27940dddc1c337c55f10d59436.jpg" alt="Abstract visualization of interconnected server nodes in a network" class="w-full h-full object-cover" size="wallpaper" aspect="wide" color="blue" query="abstract network topology visualization" referrerpolicy="no-referrer" data-modified="1" data-score="0.00"/>
+        </div>
+
+        <div class="container mx-auto px-4 sm:px-8 py-16 relative z-10">
+          <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center min-h-[80vh]">
+
+            <!-- Title Block -->
+            <div class="lg:col-span-8">
+              <div class="space-y-6">
+                <div class="inline-block px-4 py-2 bg-white/20 backdrop-blur-sm rounded-full">
+                  <span class="text-white/80 text-sm font-medium">For Backend Engineers</span>
+                </div>
+
+                <h1 class="font-serif text-4xl sm:text-5xl lg:text-7xl font-semibold text-white leading-tight">
+                  <span class="italic">The Backend Engineer&#39;s</span>
+                  <br/>
+                  Guide to Networking
+                </h1>
+
+                <p class="text-xl text-white/80 max-w-2xl leading-relaxed">
+                  Master the fundamental protocols, infrastructure concepts, and security principles that power modern web applications
+                </p>
+
+                <div class="flex flex-wrap gap-4 pt-4">
+                  <span class="protocol-badge text-white px-4 py-2 rounded-full text-sm font-medium">TCP/IP</span>
+                  <span class="protocol-badge text-white px-4 py-2 rounded-full text-sm font-medium">HTTP/HTTPS</span>
+                  <span class="protocol-badge text-white px-4 py-2 rounded-full text-sm font-medium">DNS</span>
+                  <span class="protocol-badge text-white px-4 py-2 rounded-full text-sm font-medium">Load Balancing</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Key Highlights -->
+            <div class="lg:col-span-4">
+              <div class="glass-effect rounded-2xl p-8 space-y-6">
+                <h3 class="font-serif text-2xl text-slate-800 mb-4">Key Highlights</h3>
+
+                <div class="space-y-4">
+                  <div class="flex items-start space-x-3">
+                    <i class="fas fa-network-wired text-blue-500 mt-1"></i>
+                    <div>
+                      <h4 class="font-semibold text-slate-800">OSI vs TCP/IP Models</h4>
+                      <p class="text-sm text-slate-600">Understanding networking fundamentals</p>
+                    </div>
+                  </div>
+
+                  <div class="flex items-start space-x-3">
+                    <i class="fas fa-exchange-alt text-blue-500 mt-1"></i>
+                    <div>
+                      <h4 class="font-semibold text-slate-800">TCP &amp; UDP Protocols</h4>
+                      <p class="text-sm text-slate-600">Reliable vs fast communication</p>
+                    </div>
+                  </div>
+
+                  <div class="flex items-start space-x-3">
+                    <i class="fas fa-globe text-blue-500 mt-1"></i>
+                    <div>
+                      <h4 class="font-semibold text-slate-800">HTTP Evolution</h4>
+                      <p class="text-sm text-slate-600">From HTTP/1.1 to HTTP/3</p>
+                    </div>
+                  </div>
+
+                  <div class="flex items-start space-x-3">
+                    <i class="fas fa-shield-alt text-blue-500 mt-1"></i>
+                    <div>
+                      <h4 class="font-semibold text-slate-800">TLS Security</h4>
+                      <p class="text-sm text-slate-600">Securing communication</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Foundation Section -->
+      <section id="foundation" class="section-spacing py-20 bg-white">
+        <div class="container mx-auto px-8">
+          <div class="max-w-4xl mx-auto">
+            <div class="text-center mb-16">
+              <h2 class="font-serif text-4xl font-semibold text-slate-800 mb-6">The Network Foundation</h2>
+              <p class="text-xl text-slate-600 max-w-3xl mx-auto">
+                Understanding the OSI and TCP/IP models that form the blueprint for all network communication
+              </p>
+            </div>
+
+            <div class="grid lg:grid-cols-2 gap-12 mb-16">
+              <div class="network-card p-8 rounded-2xl">
+                <h3 class="font-serif text-2xl font-semibold text-slate-800 mb-6">The OSI Model</h3>
+                <p class="text-slate-600 mb-6">
+                  The Open Systems Interconnection model standardizes network functions into seven distinct layers, providing a conceptual framework for understanding how different protocols interact <a href="https://www.rupeshbhandari.com.np/posts/tcpip-vs-osi-models-comparison/" class="citation-link">[505]</a>.
+                </p>
+
+                <div class="space-y-3">
+                  <div class="flex items-center space-x-3">
+                    <div class="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center">
+                      <span class="text-blue-600 font-bold text-sm">7</span>
+                    </div>
+                    <span class="font-medium">Application Layer (HTTP, DNS)</span>
+                  </div>
+                  <div class="flex items-center space-x-3">
+                    <div class="w-8 h-8 bg-green-100 rounded-full flex items-center justify-center">
+                      <span class="text-green-600 font-bold text-sm">4</span>
+                    </div>
+                    <span class="font-medium">Transport Layer (TCP, UDP)</span>
+                  </div>
+                  <div class="flex items-center space-x-3">
+                    <div class="w-8 h-8 bg-purple-100 rounded-full flex items-center justify-center">
+                      <span class="text-purple-600 font-bold text-sm">3</span>
+                    </div>
+                    <span class="font-medium">Network Layer (IP, ICMP)</span>
+                  </div>
+                </div>
+              </div>
+
+              <div class="network-card p-8 rounded-2xl">
+                <h3 class="font-serif text-2xl font-semibold text-slate-800 mb-6">The TCP/IP Model</h3>
+                <p class="text-slate-600 mb-6">
+                  A more practical, four-layer framework that forms the foundation of the modern internet. Developed by DARPA, it&#39;s based on real-world protocols rather than theoretical concepts <a href="https://ipcisco.com/lesson/tcp-ip-model/" class="citation-link">[503]</a>.
+                </p>
+
+                <div class="space-y-3">
+                  <div class="flex items-center space-x-3">
+                    <div class="w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center">
+                      <span class="text-white font-bold text-sm">A</span>
+                    </div>
+                    <span class="font-medium">Application Layer</span>
+                  </div>
+                  <div class="flex items-center space-x-3">
+                    <div class="w-8 h-8 bg-green-500 rounded-full flex items-center justify-center">
+                      <span class="text-white font-bold text-sm">T</span>
+                    </div>
+                    <span class="font-medium">Transport Layer</span>
+                  </div>
+                  <div class="flex items-center space-x-3">
+                    <div class="w-8 h-8 bg-purple-500 rounded-full flex items-center justify-center">
+                      <span class="text-white font-bold text-sm">I</span>
+                    </div>
+                    <span class="font-medium">Internet Layer</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- TCP Three-Way Handshake Diagram -->
+            <div class="mb-16">
+              <h3 class="font-serif text-2xl font-semibold text-slate-800 mb-8">TCP Three-Way Handshake</h3>
+              <div class="mermaid-container">
+                <div class="mermaid-controls">
+                  <button class="mermaid-control-btn zoom-in" title="放大">
+                    <i class="fas fa-search-plus"></i>
+                  </button>
+                  <button class="mermaid-control-btn zoom-out" title="缩小">
+                    <i class="fas fa-search-minus"></i>
+                  </button>
+                  <button class="mermaid-control-btn reset-zoom" title="重置">
+                    <i class="fas fa-expand-arrows-alt"></i>
+                  </button>
+                  <button class="mermaid-control-btn fullscreen" title="全屏查看">
+                    <i class="fas fa-expand"></i>
+                  </button>
+                </div>
+                <div class="mermaid">
+                  sequenceDiagram
+                  participant Client
+                  participant Server
+                  Note over Client,Server: Connection Establishment
+                  Client-&gt;&gt;Server: SYN (Seq=X)
+                  Note right of Server: LISTEN → SYN-RECEIVED
+                  Server-&gt;&gt;Client: SYN-ACK (Seq=Y, Ack=X+1)
+                  Note left of Client: SYN-SENT → ESTABLISHED
+                  Client-&gt;&gt;Server: ACK (Seq=X+1, Ack=Y+1)
+                  Note right of Server: SYN-RECEIVED → ESTABLISHED
+                  Note over Client,Server: Connection Established
+                </div>
+              </div>
+              <p class="text-sm text-slate-600 mt-4 text-center">
+                The TCP three-way handshake establishes reliable connections through synchronized sequence numbers <a href="https://medium.com/@venkatramankannantech/demystifying-networking-from-the-perspective-of-a-backend-engineer-part-1-f2d1b9ddd7c5" class="citation-link">[167]</a>.
+              </p>
+            </div>
+
+            <!-- OSI vs TCP/IP Comparison Table -->
+            <div class="overflow-x-auto">
+              <table class="w-full border-collapse border border-slate-200 rounded-xl overflow-hidden">
+                <thead class="bg-slate-100">
+                  <tr>
+                    <th class="border border-slate-200 px-6 py-4 text-left font-semibold text-slate-800">Feature</th>
+                    <th class="border border-slate-200 px-6 py-4 text-left font-semibold text-slate-800">OSI Model</th>
+                    <th class="border border-slate-200 px-6 py-4 text-left font-semibold text-slate-800">TCP/IP Model</th>
+                  </tr>
+                </thead>
+                <tbody class="bg-white">
+                  <tr>
+                    <td class="border border-slate-200 px-6 py-4 font-medium">Full Form</td>
+                    <td class="border border-slate-200 px-6 py-4">Open Systems Interconnection</td>
+                    <td class="border border-slate-200 px-6 py-4">Transmission Control Protocol/Internet Protocol</td>
+                  </tr>
+                  <tr class="bg-slate-50">
+                    <td class="border border-slate-200 px-6 py-4 font-medium">Number of Layers</td>
+                    <td class="border border-slate-200 px-6 py-4">7</td>
+                    <td class="border border-slate-200 px-6 py-4">4</td>
+                  </tr>
+                  <tr>
+                    <td class="border border-slate-200 px-6 py-4 font-medium">Approach</td>
+                    <td class="border border-slate-200 px-6 py-4">Theoretical, reference model</td>
+                    <td class="border border-slate-200 px-6 py-4">Practical, implementation model</td>
+                  </tr>
+                  <tr class="bg-slate-50">
+                    <td class="border border-slate-200 px-6 py-4 font-medium">Development</td>
+                    <td class="border border-slate-200 px-6 py-4">Developed by ISO in the late 1970s</td>
+                    <td class="border border-slate-200 px-6 py-4">Developed by DARPA in the 1970s</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <p class="text-sm text-slate-600 mt-4">
+              Table: Comparison of OSI and TCP/IP models <a href="https://www.geeksforgeeks.org/computer-networks/difference-between-osi-model-and-tcp-ip-model/" class="citation-link">[504]</a>
+              <a href="https://www.rupeshbhandari.com.np/posts/tcpip-vs-osi-models-comparison/" class="citation-link">[505]</a>
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <!-- Transport Layer Section -->
+      <section id="transport" class="section-spacing py-20 bg-slate-50">
+        <div class="container mx-auto px-8">
+          <div class="max-w-4xl mx-auto">
+            <div class="text-center mb-16">
+              <h2 class="font-serif text-4xl font-semibold text-slate-800 mb-6">The Transport Layer</h2>
+              <p class="text-xl text-slate-600 max-w-3xl mx-auto">
+                The engine of reliable communication: Understanding TCP, UDP, and socket programming
+              </p>
+            </div>
+
+            <div class="grid lg:grid-cols-2 gap-12 mb-16">
+              <div class="bg-white p-8 rounded-2xl shadow-sm border border-slate-200">
+                <div class="flex items-center space-x-4 mb-6">
+                  <div class="w-12 h-12 bg-blue-100 rounded-xl flex items-center justify-center">
+                    <i class="fas fa-handshake text-blue-600 text-xl"></i>
+                  </div>
+                  <h3 class="font-serif text-2xl font-semibold text-slate-800">TCP: The Reliable Courier</h3>
+                </div>
+
+                <p class="text-slate-600 mb-6">
+                  TCP provides reliable, ordered, and error-checked delivery through connection-oriented communication <a href="https://www.cs.uct.ac.za/mit_notes/networks/htmls/chp03.html" class="citation-link">[499]</a>.
+                </p>
+
+                <div class="space-y-4">
+                  <div class="flex items-start space-x-3">
+                    <i class="fas fa-check-circle text-green-500 mt-1"></i>
+                    <div>
+                      <h4 class="font-semibold text-slate-800">Three-Way Handshake</h4>
+                      <p class="text-sm text-slate-600">SYN → SYN-ACK → ACK</p>
+                    </div>
+                  </div>
+                  <div class="flex items-start space-x-3">
+                    <i class="fas fa-sort-numeric-up text-green-500 mt-1"></i>
+                    <div>
+                      <h4 class="font-semibold text-slate-800">Sequence Numbers</h4>
+                      <p class="text-sm text-slate-600">Ensures ordered delivery</p>
+                    </div>
+                  </div>
+                  <div class="flex items-start space-x-3">
+                    <i class="fas fa-shield-alt text-green-500 mt-1"></i>
+                    <div>
+                      <h4 class="font-semibold text-slate-800">Flow Control</h4>
+                      <p class="text-sm text-slate-600">Sliding window mechanism</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="bg-white p-8 rounded-2xl shadow-sm border border-slate-200">
+                <div class="flex items-center space-x-4 mb-6">
+                  <div class="w-12 h-12 bg-orange-100 rounded-xl flex items-center justify-center">
+                    <i class="fas fa-bolt text-orange-600 text-xl"></i>
+                  </div>
+                  <h3 class="font-serif text-2xl font-semibold text-slate-800">UDP: The Speedy Messenger</h3>
+                </div>
+
+                <p class="text-slate-600 mb-6">
+                  UDP provides connectionless, unreliable but fast communication ideal for real-time applications <a href="https://dev.to/prince_of_pasta/enterprise-networks-unveiled-a-software-engineers-guide-to-the-basics-part-2-42ni" class="citation-link">[742]</a>.
+                </p>
+
+                <div class="space-y-4">
+                  <div class="flex items-start space-x-3">
+                    <i class="fas fa-tachometer-alt text-orange-500 mt-1"></i>
+                    <div>
+                      <h4 class="font-semibold text-slate-800">Connectionless</h4>
+                      <p class="text-sm text-slate-600">No handshake overhead</p>
+                    </div>
+                  </div>
+                  <div class="flex items-start space-x-3">
+                    <i class="fas fa-clock text-orange-500 mt-1"></i>
+                    <div>
+                      <h4 class="font-semibold text-slate-800">Low Latency</h4>
+                      <p class="text-sm text-slate-600">Minimal delay</p>
+                    </div>
+                  </div>
+                  <div class="flex items-start space-x-3">
+                    <i class="fas fa-video text-orange-500 mt-1"></i>
+                    <div>
+                      <h4 class="font-semibold text-slate-800">Real-time Apps</h4>
+                      <p class="text-sm text-slate-600">Streaming, gaming, VoIP</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Python Socket Programming Example -->
+            <div class="bg-white p-8 rounded-2xl shadow-sm border border-slate-200 mb-16">
+              <h3 class="font-serif text-2xl font-semibold text-slate-800 mb-6">Practical Python: Socket Programming</h3>
+              <p class="text-slate-600 mb-6">
+                Socket programming provides a low-level interface for building network applications <a href="https://www.educative.io/courses/grokking-computer-networking" class="citation-link">[714]</a>.
+              </p>
+
+              <div class="grid lg:grid-cols-2 gap-8">
+                <div>
+                  <h4 class="font-semibold text-slate-800 mb-4">TCP Server</h4>
+                  <pre class="bg-slate-900 text-green-400 p-4 rounded-lg text-sm overflow-x-auto"><code>import socket
+import threading
+
+def handle_client(client_socket):
+    request = client_socket.recv(1024)
+    response = f&#34;Received: {request.decode()}&#34;
+    client_socket.send(response.encode())
+    client_socket.close()
+
+server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+server.bind((&#39;localhost&#39;, 8080))
+server.listen(5)
+print(&#34;TCP Server listening on port 8080&#34;)
+
+while True:
+    client_socket, addr = server.accept()
+    print(f&#34;Connection from {addr}&#34;)
+    threading.Thread(target=handle_client, 
+                    args=(client_socket,)).start()</code></pre>
+                </div>
+
+                <div>
+                  <h4 class="font-semibold text-slate-800 mb-4">TCP Client</h4>
+                  <pre class="bg-slate-900 text-green-400 p-4 rounded-lg text-sm overflow-x-auto"><code>import socket
+
+client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+client.connect((&#39;localhost&#39;, 8080))
+
+message = &#34;Hello, TCP Server!&#34;
+client.send(message.encode())
+
+response = client.recv(1024)
+print(f&#34;Server response: {response.decode()}&#34;)
+
+client.close()</code></pre>
+                </div>
+              </div>
+            </div>
+
+            <!-- TCP Connection States -->
+            <div class="bg-slate-800 text-slate-100 p-8 rounded-2xl">
+              <h3 class="font-serif text-2xl font-semibold mb-6">TCP Connection Lifecycle States</h3>
+              <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
+                <div class="text-center">
+                  <div class="w-16 h-16 bg-red-500 rounded-full flex items-center justify-center mx-auto mb-3">
+                    <i class="fas fa-times text-white text-xl"></i>
+                  </div>
+                  <h4 class="font-semibold mb-2">CLOSED</h4>
+                  <p class="text-sm text-slate-300">No connection</p>
+                </div>
+                <div class="text-center">
+                  <div class="w-16 h-16 bg-yellow-500 rounded-full flex items-center justify-center mx-auto mb-3">
+                    <i class="fas fa-sync text-white text-xl"></i>
+                  </div>
+                  <h4 class="font-semibold mb-2">SYN-SENT</h4>
+                  <p class="text-sm text-slate-300">Connection initiated</p>
+                </div>
+                <div class="text-center">
+                  <div class="w-16 h-16 bg-green-500 rounded-full flex items-center justify-center mx-auto mb-3">
+                    <i class="fas fa-check text-white text-xl"></i>
+                  </div>
+                  <h4 class="font-semibold mb-2">ESTABLISHED</h4>
+                  <p class="text-sm text-slate-300">Data transfer ready</p>
+                </div>
+                <div class="text-center">
+                  <div class="w-16 h-16 bg-blue-500 rounded-full flex items-center justify-center mx-auto mb-3">
+                    <i class="fas fa-clock text-white text-xl"></i>
+                  </div>
+                  <h4 class="font-semibold mb-2">TIME_WAIT</h4>
+                  <p class="text-sm text-slate-300">Connection closing</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Application Layer Section -->
+      <section id="application" class="section-spacing py-20 bg-white">
+        <div class="container mx-auto px-8">
+          <div class="max-w-4xl mx-auto">
+            <div class="text-center mb-16">
+              <h2 class="font-serif text-4xl font-semibold text-slate-800 mb-6">The Application Layer</h2>
+              <p class="text-xl text-slate-600 max-w-3xl mx-auto">
+                Where backend services live: HTTP, DNS, and the protocols that power web applications
+              </p>
+            </div>
+
+            <!-- HTTP Evolution -->
+            <div class="mb-16">
+              <h3 class="font-serif text-2xl font-semibold text-slate-800 mb-8">HTTP: The Language of the Web</h3>
+
+              <div class="grid lg:grid-cols-3 gap-8 mb-12">
+                <div class="bg-slate-50 p-6 rounded-xl">
+                  <div class="flex items-center space-x-3 mb-4">
+                    <div class="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center">
+                      <span class="text-blue-600 font-bold">1.1</span>
+                    </div>
+                    <h4 class="font-semibold text-slate-800">HTTP/1.1</h4>
+                  </div>
+                  <ul class="space-y-2 text-sm text-slate-600">
+                    <li class="flex items-center space-x-2">
+                      <i class="fas fa-check text-green-500"></i>
+                      <span>Persistent connections</span>
+                    </li>
+                    <li class="flex items-center space-x-2">
+                      <i class="fas fa-check text-green-500"></i>
+                      <span>Keep-Alive</span>
+                    </li>
+                    <li class="flex items-center space-x-2">
+                      <i class="fas fa-times text-red-500"></i>
+                      <span>Head-of-line blocking</span>
+                    </li>
+                  </ul>
+                </div>
+
+                <div class="bg-slate-50 p-6 rounded-xl">
+                  <div class="flex items-center space-x-3 mb-4">
+                    <div class="w-10 h-10 bg-green-100 rounded-lg flex items-center justify-center">
+                      <span class="text-green-600 font-bold">2</span>
+                    </div>
+                    <h4 class="font-semibold text-slate-800">HTTP/2</h4>
+                  </div>
+                  <ul class="space-y-2 text-sm text-slate-600">
+                    <li class="flex items-center space-x-2">
+                      <i class="fas fa-check text-green-500"></i>
+                      <span>Multiplexing</span>
+                    </li>
+                    <li class="flex items-center space-x-2">
+                      <i class="fas fa-check text-green-500"></i>
+                      <span>Header compression</span>
+                    </li>
+                    <li class="flex items-center space-x-2">
+                      <i class="fas fa-check text-green-500"></i>
+                      <span>Server push</span>
+                    </li>
+                  </ul>
+                </div>
+
+                <div class="bg-slate-50 p-6 rounded-xl">
+                  <div class="flex items-center space-x-3 mb-4">
+                    <div class="w-10 h-10 bg-purple-100 rounded-lg flex items-center justify-center">
+                      <span class="text-purple-600 font-bold">3</span>
+                    </div>
+                    <h4 class="font-semibold text-slate-800">HTTP/3</h4>
+                  </div>
+                  <ul class="space-y-2 text-sm text-slate-600">
+                    <li class="flex items-center space-x-2">
+                      <i class="fas fa-check text-green-500"></i>
+                      <span>QUIC over UDP</span>
+                    </li>
+                    <li class="flex items-center space-x-2">
+                      <i class="fas fa-check text-green-500"></i>
+                      <span>Faster handshake</span>
+                    </li>
+                    <li class="flex items-center space-x-2">
+                      <i class="fas fa-check text-green-500"></i>
+                      <span>Mobile optimization</span>
+                    </li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+
+            <!-- DNS Resolution Process -->
+            <div class="mb-16">
+              <h3 class="font-serif text-2xl font-semibold text-slate-800 mb-8">DNS: The Internet&#39;s Phonebook</h3>
+
+              <div class="bg-slate-50 p-8 rounded-2xl mb-8">
+                <h4 class="font-semibold text-slate-800 mb-4">DNS Resolution Process</h4>
+                <div class="grid md:grid-cols-5 gap-4">
+                  <div class="text-center">
+                    <div class="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-3">
+                      <i class="fas fa-browser text-blue-600"></i>
+                    </div>
+                    <h5 class="font-medium text-slate-800 mb-2">Browser</h5>
+                    <p class="text-xs text-slate-600">Checks local cache</p>
+                  </div>
+                  <div class="text-center">
+                    <div class="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-3">
+                      <i class="fas fa-server text-green-600"></i>
+                    </div>
+                    <h5 class="font-medium text-slate-800 mb-2">Resolver</h5>
+                    <p class="text-xs text-slate-600">Queries DNS servers</p>
+                  </div>
+                  <div class="text-center">
+                    <div class="w-16 h-16 bg-yellow-100 rounded-full flex items-center justify-center mx-auto mb-3">
+                      <i class="fas fa-sitemap text-yellow-600"></i>
+                    </div>
+                    <h5 class="font-medium text-slate-800 mb-2">Root Server</h5>
+                    <p class="text-xs text-slate-600">Points to TLD servers</p>
+                  </div>
+                  <div class="text-center">
+                    <div class="w-16 h-16 bg-purple-100 rounded-full flex items-center justify-center mx-auto mb-3">
+                      <i class="fas fa-database text-purple-600"></i>
+                    </div>
+                    <h5 class="font-medium text-slate-800 mb-2">Authoritative</h5>
+                    <p class="text-xs text-slate-600">Returns IP address</p>
+                  </div>
+                  <div class="text-center">
+                    <div class="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-3">
+                      <i class="fas fa-check text-red-600"></i>
+                    </div>
+                    <h5 class="font-medium text-slate-800 mb-2">Response</h5>
+                    <p class="text-xs text-slate-600">IP address returned</p>
+                  </div>
+                </div>
+              </div>
+
+              <!-- DNS Record Types -->
+              <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <div class="bg-white p-6 rounded-xl border border-slate-200">
+                  <h4 class="font-semibold text-slate-800 mb-3 flex items-center">
+                    <span class="w-6 h-6 bg-blue-500 text-white rounded-full flex items-center justify-center text-xs font-bold mr-2">A</span>
+                    A Record
+                  </h4>
+                  <p class="text-sm text-slate-600">Maps domain to IPv4 address</p>
+                </div>
+                <div class="bg-white p-6 rounded-xl border border-slate-200">
+                  <h4 class="font-semibold text-slate-800 mb-3 flex items-center">
+                    <span class="w-6 h-6 bg-green-500 text-white rounded-full flex items-center justify-center text-xs font-bold mr-2">AAAA</span>
+                    AAAA Record
+                  </h4>
+                  <p class="text-sm text-slate-600">Maps domain to IPv6 address</p>
+                </div>
+                <div class="bg-white p-6 rounded-xl border border-slate-200">
+                  <h4 class="font-semibold text-slate-800 mb-3 flex items-center">
+                    <span class="w-6 h-6 bg-purple-500 text-white rounded-full flex items-center justify-center text-xs font-bold mr-2">C</span>
+                    CNAME
+                  </h4>
+                  <p class="text-sm text-slate-600">Creates domain aliases</p>
+                </div>
+                <div class="bg-white p-6 rounded-xl border border-slate-200">
+                  <h4 class="font-semibold text-slate-800 mb-3 flex items-center">
+                    <span class="w-6 h-6 bg-orange-500 text-white rounded-full flex items-center justify-center text-xs font-bold mr-2">MX</span>
+                    MX Record
+                  </h4>
+                  <p class="text-sm text-slate-600">Specifies mail servers</p>
+                </div>
+                <div class="bg-white p-6 rounded-xl border border-slate-200">
+                  <h4 class="font-semibold text-slate-800 mb-3 flex items-center">
+                    <span class="w-6 h-6 bg-red-500 text-white rounded-full flex items-center justify-center text-xs font-bold mr-2">TXT</span>
+                    TXT Record
+                  </h4>
+                  <p class="text-sm text-slate-600">Stores arbitrary text data</p>
+                </div>
+                <div class="bg-white p-6 rounded-xl border border-slate-200">
+                  <h4 class="font-semibold text-slate-800 mb-3 flex items-center">
+                    <span class="w-6 h-6 bg-teal-500 text-white rounded-full flex items-center justify-center text-xs font-bold mr-2">NS</span>
+                    NS Record
+                  </h4>
+                  <p class="text-sm text-slate-600">Specifies name servers</p>
+                </div>
+              </div>
+            </div>
+
+            <!-- Python HTTP Client Example -->
+            <div class="bg-slate-50 p-8 rounded-2xl">
+              <h3 class="font-serif text-2xl font-semibold text-slate-800 mb-6">Practical Python: HTTP Client</h3>
+              <p class="text-slate-600 mb-6">
+                Using the
+                <code class="bg-slate-200 px-2 py-1 rounded text-sm">requests</code> library for HTTP communication <a href="https://www.futurelearn.com/info/courses/networking-with-python-socket-programming-for-communication/0/steps/76127" class="citation-link">[475]</a>.
+              </p>
+
+              <pre class="bg-slate-800 text-green-400 p-6 rounded-lg text-sm overflow-x-auto"><code>import requests
+from requests.exceptions import RequestException
+
+def make_http_request(url, method=&#39;GET&#39;, data=None, headers=None):
+    &#34;&#34;&#34;
+    Make an HTTP request with error handling and response processing
+    &#34;&#34;&#34;
+    try:
+        if method.upper() == &#39;GET&#39;:
+            response = requests.get(url, headers=headers, timeout=10)
+        elif method.upper() == &#39;POST&#39;:
+            response = requests.post(url, json=data, headers=headers, timeout=10)
+        else:
+            raise ValueError(f&#34;Unsupported HTTP method: {method}&#34;)
+        
+        # Check response status
+        response.raise_for_status()
+        
+        # Process successful response
+        return {
+            &#39;status_code&#39;: response.status_code,
+            &#39;headers&#39;: dict(response.headers),
+            &#39;body&#39;: response.json() if response.headers.get(&#39;content-type&#39;, &#39;&#39;).startswith(&#39;application/json&#39;) else response.text,
+            &#39;elapsed_ms&#39;: response.elapsed.total_seconds() * 1000
+        }
+        
+    except RequestException as e:
+        print(f&#34;HTTP request failed: {e}&#34;)
+        return None
+    except Exception as e:
+        print(f&#34;Unexpected error: {e}&#34;)
+        return None
+
+# Usage example
+if __name__ == &#34;__main__&#34;:
+    # GET request
+    result = make_http_request(&#39;https://api.example.com/users&#39;)
+    if result:
+        print(f&#34;Status: {result[&#39;status_code&#39;]}&#34;)
+        print(f&#34;Response time: {result[&#39;elapsed_ms&#39;]}ms&#34;)
+        
+    # POST request with JSON
+    user_data = {&#39;name&#39;: &#39;John Doe&#39;, &#39;email&#39;: &#39;john@example.com&#39;}
+    result = make_http_request(&#39;https://api.example.com/users&#39;, &#39;POST&#39;, user_data)
+    if result:
+        print(f&#34;Created user with ID: {result[&#39;body&#39;].get(&#39;id&#39;)}&#34;)</code></pre>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Network Layer Section -->
+      <section id="network-layer" class="section-spacing py-20 bg-slate-50">
+        <div class="container mx-auto px-8">
+          <div class="max-w-4xl mx-auto">
+            <div class="text-center mb-16">
+              <h2 class="font-serif text-4xl font-semibold text-slate-800 mb-6">The Network Layer</h2>
+              <p class="text-xl text-slate-600 max-w-3xl mx-auto">
+                Routing and diagnostics: Understanding IP addressing, subnetting, and network troubleshooting
+              </p>
+            </div>
+
+            <!-- IP Addressing -->
+            <div class="mb-16">
+              <h3 class="font-serif text-2xl font-semibold text-slate-800 mb-8">Internet Protocol (IP)</h3>
+
+              <div class="grid lg:grid-cols-2 gap-8 mb-12">
+                <div class="bg-white p-8 rounded-2xl shadow-sm border border-slate-200">
+                  <h4 class="font-semibold text-slate-800 mb-4 flex items-center">
+                    <i class="fas fa-globe text-blue-500 mr-3"></i>
+                    IPv4
+                  </h4>
+                  <div class="space-y-4">
+                    <div>
+                      <span class="text-sm font-medium text-slate-600">Address Format:</span>
+                      <code class="block bg-slate-100 p-2 rounded mt-1 text-sm">192.168.1.1</code>
+                    </div>
+                    <div>
+                      <span class="text-sm font-medium text-slate-600">Address Space:</span>
+                      <p class="text-sm text-slate-600 mt-1">32-bit (4.3 billion addresses)</p>
+                    </div>
+                    <div>
+                      <span class="text-sm font-medium text-slate-600">Notation:</span>
+                      <p class="text-sm text-slate-600 mt-1">Dotted decimal</p>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="bg-white p-8 rounded-2xl shadow-sm border border-slate-200">
+                  <h4 class="font-semibold text-slate-800 mb-4 flex items-center">
+                    <i class="fas fa-globe text-green-500 mr-3"></i>
+                    IPv6
+                  </h4>
+                  <div class="space-y-4">
+                    <div>
+                      <span class="text-sm font-medium text-slate-600">Address Format:</span>
+                      <code class="block bg-slate-100 p-2 rounded mt-1 text-xs">2001:0db8:85a3:0000:0000:8a2e:0370:7334</code>
+                    </div>
+                    <div>
+                      <span class="text-sm font-medium text-slate-600">Address Space:</span>
+                      <p class="text-sm text-slate-600 mt-1">128-bit (virtually unlimited)</p>
+                    </div>
+                    <div>
+                      <span class="text-sm font-medium text-slate-600">Notation:</span>
+                      <p class="text-sm text-slate-600 mt-1">Hexadecimal, colon-separated</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- CIDR Notation Example -->
+              <div class="bg-slate-50 p-8 rounded-2xl">
+                <h4 class="font-semibold text-slate-800 mb-4">CIDR Notation Examples</h4>
+                <div class="grid md:grid-cols-2 gap-6">
+                  <div>
+                    <h5 class="font-medium text-slate-700 mb-2">IPv4 CIDR</h5>
+                    <div class="space-y-2 text-sm">
+                      <div class="flex justify-between">
+                        <code>192.168.1.0/24</code>
+                        <span class="text-slate-600">256 addresses</span>
+                      </div>
+                      <div class="flex justify-between">
+                        <code>10.0.0.0/16</code>
+                        <span class="text-slate-600">65,536 addresses</span>
+                      </div>
+                      <div class="flex justify-between">
+                        <code>172.16.0.0/12</code>
+                        <span class="text-slate-600">1,048,576 addresses</span>
+                      </div>
+                    </div>
+                  </div>
+                  <div>
+                    <h5 class="font-medium text-slate-700 mb-2">IPv6 CIDR</h5>
+                    <div class="space-y-2 text-sm">
+                      <div class="flex justify-between">
+                        <code>::/0</code>
+                        <span class="text-slate-600">All addresses</span>
+                      </div>
+                      <div class="flex justify-between">
+                        <code>2001:db8::/32</code>
+                        <span class="text-slate-600">Documentation</span>
+                      </div>
+                      <div class="flex justify-between">
+                        <code>2001:db8:1234::/48
+                          <span class="text-slate-600">Site allocation</span>
+                      </code></div><code>
+                    </code></div><code>
+                  </code></div><code>
+                </code></div><code>
+              </code></div><code>
+            </code></div><code>
+
+            <!-- ICMP and Network Diagnostics -->
+            <div class="mb-16">
+              <h3 class="font-serif text-2xl font-semibold text-slate-800 mb-8">ICMP: Network Diagnostics</h3>
+
+              <div class="bg-white p-8 rounded-2xl shadow-sm border border-slate-200 mb-8">
+                <p class="text-slate-600 mb-6">
+                  The Internet Control Message Protocol (ICMP) provides network diagnostic and error reporting capabilities <a href="https://www.cloudflare.com/learning/network-layer/what-is-the-network-layer/" class="citation-link">[521]</a>.
+                </p>
+
+                <div class="grid md:grid-cols-3 gap-6">
+                  <div class="text-center">
+                    <div class="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                      <i class="fas fa-search text-blue-600 text-xl"></i>
+                    </div>
+                    <h4 class="font-semibold text-slate-800 mb-2">Echo Request/Reply</h4>
+                    <p class="text-sm text-slate-600">Used by
+                      <code class="bg-slate-100 px-2 py-1 rounded text-xs">ping</code> for connectivity testing
+                    </p>
+                  </div>
+                  <div class="text-center">
+                    <div class="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                      <i class="fas fa-exclamation-triangle text-red-600 text-xl"></i>
+                    </div>
+                    <h4 class="font-semibold text-slate-800 mb-2">Destination Unreachable</h4>
+                    <p class="text-sm text-slate-600">Indicates packet delivery failure</p>
+                  </div>
+                  <div class="text-center">
+                    <div class="w-16 h-16 bg-yellow-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                      <i class="fas fa-clock text-yellow-600 text-xl"></i>
+                    </div>
+                    <h4 class="font-semibold text-slate-800 mb-2">Time Exceeded</h4>
+                    <p class="text-sm text-slate-600">Used by
+                      <code class="bg-slate-100 px-2 py-1 rounded text-xs">traceroute</code>
+                    </p>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Network Diagnostic Commands -->
+              <div class="bg-slate-800 text-slate-100 p-6 rounded-2xl">
+                <h4 class="font-semibold mb-4">Common Network Diagnostic Commands</h4>
+                <div class="grid md:grid-cols-2 gap-6">
+                  <div>
+                    <h5 class="font-medium text-green-400 mb-2">Ping Example</h5>
+                    <pre class="text-xs text-green-400"><code>$ ping google.com
+PING google.com (142.250.190.78): 56 data bytes
+64 bytes from 142.250.190.78: icmp_seq=0 ttl=115 time=12.345 ms
+64 bytes from 142.250.190.78: icmp_seq=1 ttl=115 time=11.234 ms</code></pre>
+                  </div>
+                  <div>
+                    <h5 class="font-medium text-green-400 mb-2">Traceroute Example</h5>
+                    <pre class="text-xs text-green-400"><code>$ traceroute google.com
+traceroute to google.com (142.250.190.78), 30 hops max
+ 1  _gateway (192.168.1.1)  1.123 ms  1.045 ms  1.012 ms
+ 2  10.1.10.1 (10.1.10.1)  8.234 ms  8.123 ms  8.045 ms
+ 3  175.41.138.177.bc.googleusercontent.com  12.345 ms</code></pre>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Python ICMP Example -->
+            <div class="bg-white p-8 rounded-2xl shadow-sm border border-slate-200">
+              <h3 class="font-serif text-2xl font-semibold text-slate-800 mb-6">Python Network Diagnostics</h3>
+              <p class="text-slate-600 mb-6">
+                Using Python&#39;s
+                <code class="bg-slate-100 px-2 py-1 rounded text-sm">socket</code> module for ICMP operations.
+              </p>
+
+              <pre class="bg-slate-900 text-green-400 p-6 rounded-lg text-sm overflow-x-auto"><code>import socket
+import struct
+import time
+import os
+
+def create_icmp_packet(seq_number=1):
+    &#34;&#34;&#34;Create ICMP echo request packet&#34;&#34;&#34;
+    # ICMP header: type (8), code (0), checksum, id, sequence
+    icmp_type = 8  # Echo Request
+    icmp_code = 0
+    icmp_id = os.getpid() &amp; 0xFFFF
+    icmp_seq = seq_number
+    icmp_checksum = 0
+    
+    # Create header with checksum 0
+    header = struct.pack(&#39;BBHHH&#39;, icmp_type, icmp_code, 
+                        icmp_checksum, icmp_id, icmp_seq)
+    
+    # Calculate checksum
+    data = b&#39;PingData&#39;  # Payload
+    packet = header + data
+    checksum = calculate_checksum(packet)
+    
+    # Create final packet with correct checksum
+    header = struct.pack(&#39;BBHHH&#39;, icmp_type, icmp_code, 
+                        checksum, icmp_id, icmp_seq)
+    return header + data
+
+def calculate_checksum(packet):
+    &#34;&#34;&#34;Calculate ICMP checksum&#34;&#34;&#34;
+    # Implementation of checksum calculation
+    # (Simplified for demonstration)
+    return 0x1234  # Example checksum
+
+def ping(host, timeout=2):
+    &#34;&#34;&#34;Send ICMP echo request and measure response time&#34;&#34;&#34;
+    try:
+        # Resolve hostname to IP
+        ip_address = socket.gethostbyname(host)
+        print(f&#34;Pinging {host} ({ip_address})&#34;)
+        
+        # Create raw socket
+        icmp_socket = socket.socket(socket.AF_INET, 
+                                   socket.SOCK_RAW, 
+                                   socket.IPPROTO_ICMP)
+        
+        # Set timeout
+        icmp_socket.settimeout(timeout)
+        
+        # Create and send packet
+        packet = create_icmp_packet(seq_number=1)
+        start_time = time.time()
+        
+        icmp_socket.sendto(packet, (ip_address, 1))
+        
+        # Receive response
+        response, addr = icmp_socket.recvfrom(1024)
+        end_time = time.time()
+        
+        # Calculate round-trip time
+        rtt_ms = (end_time - start_time) * 1000
+        
+        print(f&#34;Reply from {addr[0]}: time={rtt_ms:.2f}ms&#34;)
+        return rtt_ms
+        
+    except socket.timeout:
+        print(f&#34;Request timed out for {host}&#34;)
+        return None
+    except socket.gaierror:
+        print(f&#34;Could not resolve hostname: {host}&#34;)
+        return None
+    finally:
+        icmp_socket.close()
+
+# Usage example
+if __name__ == &#34;__main__&#34;:
+    # Note: Raw sockets require root privileges
+    # ping(&#34;google.com&#34;)
+    pass</code></pre>
+            </div>
+          </code></div><code>
+        </code></div><code>
+      </code></section><code>
+
+      <!-- Scaling and Security Section -->
+      <section id="scaling" class="section-spacing py-20 bg-white">
+        <div class="container mx-auto px-8">
+          <div class="max-w-4xl mx-auto">
+            <div class="text-center mb-16">
+              <h2 class="font-serif text-4xl font-semibold text-slate-800 mb-6">Scaling &amp; Securing Backend Services</h2>
+              <p class="text-xl text-slate-600 max-w-3xl mx-auto">
+                Load balancing strategies and TLS encryption for production-ready applications
+              </p>
+            </div>
+
+            <!-- Load Balancing -->
+            <div class="mb-16">
+              <h3 class="font-serif text-2xl font-semibold text-slate-800 mb-8">Load Balancing: Distributing Traffic</h3>
+
+              <div class="grid lg:grid-cols-2 gap-8 mb-12">
+                <div class="bg-slate-50 p-8 rounded-2xl">
+                  <h4 class="font-semibold text-slate-800 mb-4 flex items-center">
+                    <i class="fas fa-layer-group text-blue-500 mr-3"></i>
+                    Layer 4 (Transport) Load Balancing
+                  </h4>
+                  <p class="text-slate-600 mb-4">
+                    Operates at the transport layer, making routing decisions based on IP addresses and ports.
+                  </p>
+                  <ul class="space-y-2 text-sm text-slate-600">
+                    <li class="flex items-center space-x-2">
+                      <i class="fas fa-check text-green-500"></i>
+                      <span>High performance</span>
+                    </li>
+                    <li class="flex items-center space-x-2">
+                      <i class="fas fa-check text-green-500"></i>
+                      <span>Simple implementation</span>
+                    </li>
+                    <li class="flex items-center space-x-2">
+                      <i class="fas fa-times text-red-500"></i>
+                      <span>No content inspection</span>
+                    </li>
+                  </ul>
+                </div>
+
+                <div class="bg-slate-50 p-8 rounded-2xl">
+                  <h4 class="font-semibold text-slate-800 mb-4 flex items-center">
+                    <i class="fas fa-cogs text-green-500 mr-3"></i>
+                    Layer 7 (Application) Load Balancing
+                  </h4>
+                  <p class="text-slate-600 mb-4">
+                    Operates at the application layer, inspecting HTTP headers, URLs, and cookies.
+                  </p>
+                  <ul class="space-y-2 text-sm text-slate-600">
+                    <li class="flex items-center space-x-2">
+                      <i class="fas fa-check text-green-500"></i>
+                      <span>Content-aware routing</span>
+                    </li>
+                    <li class="flex items-center space-x-2">
+                      <i class="fas fa-check text-green-500"></i>
+                      <span>SSL termination</span>
+                    </li>
+                    <li class="flex items-center space-x-2">
+                      <i class="fas fa-check text-green-500"></i>
+                      <span>Advanced features</span>
+                    </li>
+                  </ul>
+                </div>
+              </div>
+
+              <!-- Load Balancing Algorithms -->
+              <div class="bg-white p-8 rounded-2xl shadow-sm border border-slate-200">
+                <h4 class="font-semibold text-slate-800 mb-6">Load Balancing Algorithms</h4>
+                <div class="grid md:grid-cols-3 gap-6">
+                  <div class="text-center">
+                    <div class="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                      <i class="fas fa-sync-alt text-blue-600 text-xl"></i>
+                    </div>
+                    <h5 class="font-semibold text-slate-800 mb-2">Round-Robin</h5>
+                    <p class="text-sm text-slate-600">Sequential distribution of requests</p>
+                  </div>
+                  <div class="text-center">
+                    <div class="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                      <i class="fas fa-balance-scale text-green-600 text-xl"></i>
+                    </div>
+                    <h5 class="font-semibold text-slate-800 mb-2">Least Connections</h5>
+                    <p class="text-sm text-slate-600">Routes to server with fewest active connections</p>
+                  </div>
+                  <div class="text-center">
+                    <div class="w-16 h-16 bg-purple-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                      <i class="fas fa-fingerprint text-purple-600 text-xl"></i>
+                    </div>
+                    <h5 class="font-semibold text-slate-800 mb-2">IP Hash</h5>
+                    <p class="text-sm text-slate-600">Hash-based routing for session persistence</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- TLS Security -->
+            <div class="mb-16">
+              <h3 class="font-serif text-2xl font-semibold text-slate-800 mb-8">Transport Layer Security (TLS)</h3>
+
+              <!-- TLS Handshake -->
+              <div class="bg-slate-50 p-8 rounded-2xl mb-8">
+                <h4 class="font-semibold text-slate-800 mb-6">TLS Handshake Process</h4>
+                <div class="mermaid-container">
+                  <div class="mermaid-controls">
+                    <button class="mermaid-control-btn zoom-in" title="放大">
+                      <i class="fas fa-search-plus"></i>
+                    </button>
+                    <button class="mermaid-control-btn zoom-out" title="缩小">
+                      <i class="fas fa-search-minus"></i>
+                    </button>
+                    <button class="mermaid-control-btn reset-zoom" title="重置">
+                      <i class="fas fa-expand-arrows-alt"></i>
+                    </button>
+                    <button class="mermaid-control-btn fullscreen" title="全屏查看">
+                      <i class="fas fa-expand"></i>
+                    </button>
+                  </div>
+                  <div class="mermaid">
+                    sequenceDiagram
+                    participant Client
+                    participant Server
+                    participant CA
+                    Note over Client,Server: TLS Handshake
+                    Client-&gt;&gt;Server: Client Hello
+                    Server-&gt;&gt;Client: Server Hello
+                    Server-&gt;&gt;Client: Certificate
+                    Client-&gt;&gt;CA: Validate Certificate
+                    CA--&gt;&gt;Client: Certificate Valid
+                    Client-&gt;&gt;Server: Client Key Exchange
+                    Client-&gt;&gt;Server: Change Cipher Spec
+                    Client-&gt;&gt;Server: Finished
+                    Server-&gt;&gt;Client: Change Cipher Spec
+                    Server-&gt;&gt;Client: Finished
+                    Note over Client,Server: Secure Connection Established
+                  </div>
+                </div>
+                <p class="text-sm text-slate-600 mt-4 text-center">
+                  The TLS handshake establishes secure communication through certificate validation and key exchange.
+                </p>
+              </div>
+
+              <div class="grid lg:grid-cols-2 gap-8">
+                <div class="bg-white p-8 rounded-2xl shadow-sm border border-slate-200">
+                  <h4 class="font-semibold text-slate-800 mb-4">TLS Security Services</h4>
+                  <div class="space-y-4">
+                    <div class="flex items-start space-x-3">
+                      <div class="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center">
+                        <i class="fas fa-user-shield text-blue-600"></i>
+                      </div>
+                      <div>
+                        <h5 class="font-medium text-slate-800">Authentication</h5>
+                        <p class="text-sm text-slate-600">Certificate-based identity verification</p>
+                      </div>
+                    </div>
+                    <div class="flex items-start space-x-3">
+                      <div class="w-10 h-10 bg-green-100 rounded-lg flex items-center justify-center">
+                        <i class="fas fa-lock text-green-600"></i>
+                      </div>
+                      <div>
+                        <h5 class="font-medium text-slate-800">Confidentiality</h5>
+                        <p class="text-sm text-slate-600">Encryption protects data in transit</p>
+                      </div>
+                    </div>
+                    <div class="flex items-start space-x-3">
+                      <div class="w-10 h-10 bg-purple-100 rounded-lg flex items-center justify-center">
+                        <i class="fas fa-shield-alt text-purple-600"></i>
+                      </div>
+                      <div>
+                        <h5 class="font-medium text-slate-800">Integrity</h5>
+                        <p class="text-sm text-slate-600">Message authentication codes prevent tampering</p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="bg-white p-8 rounded-2xl shadow-sm border border-slate-200">
+                  <h4 class="font-semibold text-slate-800 mb-4">Certificate Management</h4>
+                  <div class="space-y-4">
+                    <div>
+                      <h5 class="font-medium text-slate-800 mb-2">Certificate Authorities</h5>
+                      <ul class="text-sm text-slate-600 space-y-1">
+                        <li>• Let&#39;s Encrypt (Free)</li>
+                        <li>• DigiCert</li>
+                        <li>• Comodo</li>
+                        <li>• GlobalSign</li>
+                      </ul>
+                    </div>
+                    <div>
+                      <h5 class="font-medium text-slate-800 mb-2">Certificate Types</h5>
+                      <ul class="text-sm text-slate-600 space-y-1">
+                        <li>• Domain Validated (DV)</li>
+                        <li>• Organization Validated (OV)</li>
+                        <li>• Extended Validation (EV)</li>
+                        <li>• Wildcard Certificates</li>
+                      </ul>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Python Load Balancer Simulation -->
+            <div class="bg-slate-50 p-8 rounded-2xl">
+              <h3 class="font-serif text-2xl font-semibold text-slate-800 mb-6">Python Load Balancer Simulation</h3>
+
+              <pre class="bg-slate-800 text-green-400 p-6 rounded-lg text-sm overflow-x-auto"><code>import socket
+import threading
+import random
+from typing import List, Tuple
+
+class LoadBalancer:
+    def __init__(self, host: str, port: int, backend_servers: List[Tuple[str, int]]):
+        self.host = host
+        self.port = port
+        self.backend_servers = backend_servers
+        self.current_index = 0
+        self.lock = threading.Lock()
+    
+    def get_next_server_round_robin(self) -&gt; Tuple[str, int]:
+        &#34;&#34;&#34;Round-robin server selection&#34;&#34;&#34;
+        with self.lock:
+            server = self.backend_servers[self.current_index]
+            self.current_index = (self.current_index + 1) % len(self.backend_servers)
+            return server
+    
+    def get_server_least_connections(self, connections: dict) -&gt; Tuple[str, int]:
+        &#34;&#34;&#34;Select server with least connections&#34;&#34;&#34;
+        with self.lock:
+            min_connections = min(connections.values())
+            candidates = [s for s, c in connections.items() if c == min_connections]
+            return random.choice(candidates)
+    
+    def handle_client(self, client_socket: socket.socket, 
+                     server_socket: socket.socket):
+        &#34;&#34;&#34;Handle bidirectional communication&#34;&#34;&#34;
+        try:
+            while True:
+                # Forward client to server
+                data = client_socket.recv(4096)
+                if not data:
+                    break
+                server_socket.send(data)
+                
+                # Forward server to client
+                data = server_socket.recv(4096)
+                if not data:
+                    break
+                client_socket.send(data)
+        except socket.error as e:
+            print(f&#34;Connection error: {e}&#34;)
+        finally:
+            client_socket.close()
+            server_socket.close()
+    
+    def start(self, algorithm=&#34;round_robin&#34;):
+        &#34;&#34;&#34;Start the load balancer&#34;&#34;&#34;
+        server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        server.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+        server.bind((self.host, self.port))
+        server.listen(5)
+        
+        print(f&#34;Load balancer started on {self.host}:{self.port}&#34;)
+        print(f&#34;Backend servers: {self.backend_servers}&#34;)
+        print(f&#34;Algorithm: {algorithm}&#34;)
+        
+        try:
+            while True:
+                client_socket, client_addr = server.accept()
+                print(f&#34;Connection from {client_addr}&#34;)
+                
+                # Select backend server
+                if algorithm == &#34;round_robin&#34;:
+                    server_addr = self.get_next_server_round_robin()
+                else:
+                    # For demonstration, use round-robin
+                    server_addr = self.get_next_server_round_robin()
+                
+                # Connect to backend server
+                server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+                server_socket.connect(server_addr)
+                
+                # Start forwarding threads
+                threading.Thread(target=self.handle_client, 
+                               args=(client_socket, server_socket)).start()
+                
+        except KeyboardInterrupt:
+            print(&#34;\nShutting down load balancer...&#34;)
+        finally:
+            server.close()
+
+# Usage example
+if __name__ == &#34;__main__&#34;:
+    # Define backend servers
+    backend_servers = [
+        (&#39;localhost&#39;, 8001),
+        (&#39;localhost&#39;, 8002),
+        (&#39;localhost&#39;, 8003)
+    ]
+    
+    # Create and start load balancer
+    lb = LoadBalancer(&#39;localhost&#39;, 8080, backend_servers)
+    lb.start(algorithm=&#34;round_robin&#34;)</code></pre>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Interview Questions Section -->
+      <section id="interview" class="section-spacing py-20 bg-slate-50">
+        <div class="container mx-auto px-8">
+          <div class="max-w-4xl mx-auto">
+            <div class="text-center mb-16">
+              <h2 class="font-serif text-4xl font-semibold text-slate-800 mb-6">Interview Questions for Backend Engineers</h2>
+              <p class="text-xl text-slate-600 max-w-3xl mx-auto">
+                Common networking questions asked in backend engineering interviews
+              </p>
+            </div>
+
+            <div class="space-y-12">
+              <!-- Core Networking Concepts -->
+              <div class="bg-white p-8 rounded-2xl shadow-sm border border-slate-200">
+                <h3 class="font-serif text-2xl font-semibold text-slate-800 mb-6">Core Networking Concepts</h3>
+
+                <div class="space-y-8">
+                  <div>
+                    <h4 class="font-semibold text-slate-800 mb-3">1. Explain the difference between TCP and UDP.</h4>
+                    <div class="bg-slate-50 p-6 rounded-lg">
+                      <div class="grid md:grid-cols-2 gap-6">
+                        <div>
+                          <h5 class="font-medium text-blue-600 mb-2">TCP (Transmission Control Protocol)</h5>
+                          <ul class="text-sm text-slate-600 space-y-1">
+                            <li>• Connection-oriented protocol</li>
+                            <li>• Reliable, ordered delivery</li>
+                            <li>• Error checking and recovery</li>
+                            <li>• Flow and congestion control</li>
+                            <li>• Three-way handshake</li>
+                            <li>• Suitable for: HTTP, FTP, SMTP</li>
+                          </ul>
+                        </div>
+                        <div>
+                          <h5 class="font-medium text-orange-600 mb-2">UDP (User Datagram Protocol)</h5>
+                          <ul class="text-sm text-slate-600 space-y-1">
+                            <li>• Connectionless protocol</li>
+                            <li>• Unreliable delivery</li>
+                            <li>• No error recovery</li>
+                            <li>• Minimal overhead</li>
+                            <li>• No handshake required</li>
+                            <li>• Suitable for: DNS, VoIP, gaming</li>
+                          </ul>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div>
+                    <h4 class="font-semibold text-slate-800 mb-3">2. What happens when you type a URL in your browser?</h4>
+                    <div class="bg-slate-50 p-6 rounded-lg">
+                      <ol class="list-decimal list-inside space-y-2 text-sm text-slate-600">
+                        <li><strong>URL Parsing:</strong> Browser extracts domain name from URL</li>
+                        <li><strong>DNS Resolution:</strong>
+                          <ul class="ml-4 mt-1 space-y-1">
+                            <li>• Browser cache → OS cache → Recursive resolver</li>
+                            <li>• Root server → TLD server → Authoritative server</li>
+                          </ul>
+                        </li>
+                        <li><strong>TCP Connection:</strong> Three-way handshake with server</li>
+                        <li><strong>TLS Handshake:</strong> (If HTTPS) Certificate validation and key exchange</li>
+                        <li><strong>HTTP Request:</strong> Browser sends HTTP request headers</li>
+                        <li><strong>Server Processing:</strong> Application processes request</li>
+                        <li><strong>HTTP Response:</strong> Server sends response with status and body</li>
+                        <li><strong>Page Rendering:</strong> Browser parses HTML, CSS, JavaScript</li>
+                      </ol>
+                    </div>
+                  </div>
+
+                  <div>
+                    <h4 class="font-semibold text-slate-800 mb-3">3. Describe the OSI or TCP/IP model.</h4>
+                    <div class="bg-slate-50 p-6 rounded-lg">
+                      <p class="text-sm text-slate-600 mb-4">
+                        <strong>TCP/IP Model (4 layers):</strong> Practical implementation used in modern networking
+                      </p>
+                      <div class="grid md:grid-cols-2 gap-4 text-sm">
+                        <div>
+                          <h5 class="font-medium text-blue-600 mb-2">Application Layer</h5>
+                          <p class="text-slate-600">HTTP, FTP, SMTP, DNS - Direct user interaction</p>
+                        </div>
+                        <div>
+                          <h5 class="font-medium text-green-600 mb-2">Transport Layer</h5>
+                          <p class="text-slate-600">TCP, UDP - End-to-end communication</p>
+                        </div>
+                        <div>
+                          <h5 class="font-medium text-purple-600 mb-2">Internet Layer</h5>
+                          <p class="text-slate-600">IP, ICMP - Routing and addressing</p>
+                        </div>
+                        <div>
+                          <h5 class="font-medium text-orange-600 mb-2">Network Access Layer</h5>
+                          <p class="text-slate-600">Ethernet, Wi-Fi - Physical transmission</p>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Deep Dive into TCP -->
+              <div class="bg-white p-8 rounded-2xl shadow-sm border border-slate-200">
+                <h3 class="font-serif text-2xl font-semibold text-slate-800 mb-6">Deep Dive into TCP</h3>
+
+                <div class="space-y-8">
+                  <div>
+                    <h4 class="font-semibold text-slate-800 mb-3">1. Walk me through the TCP three-way handshake.</h4>
+                    <div class="bg-slate-50 p-6 rounded-lg">
+                      <div class="grid md:grid-cols-3 gap-4 text-center">
+                        <div>
+                          <div class="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-3">
+                            <span class="text-blue-600 font-bold">1</span>
+                          </div>
+                          <h5 class="font-medium text-slate-800 mb-2">Client → Server: SYN</h5>
+                          <p class="text-sm text-slate-600">Client sends SYN (synchronize) packet with initial sequence number X</p>
+                        </div>
+                        <div>
+                          <div class="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-3">
+                            <span class="text-green-600 font-bold">2</span>
+                          </div>
+                          <h5 class="font-medium text-slate-800 mb-2">Server → Client: SYN-ACK</h5>
+                          <p class="text-sm text-slate-600">Server responds with SYN (sequence Y) and ACK (X+1)</p>
+                        </div>
+                        <div>
+                          <div class="w-16 h-16 bg-purple-100 rounded-full flex items-center justify-center mx-auto mb-3">
+                            <span class="text-purple-600 font-bold">3</span>
+                          </div>
+                          <h5 class="font-medium text-slate-800 mb-2">Client → Server: ACK</h5>
+                          <p class="text-sm text-slate-600">Client sends ACK (Y+1), connection established</p>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div>
+                    <h4 class="font-semibold text-slate-800 mb-3">2. What is the purpose of the TIME_WAIT state?</h4>
+                    <div class="bg-slate-50 p-6 rounded-lg">
+                      <div class="space-y-3 text-sm text-slate-600">
+                        <p><strong>Duration:</strong> Typically 2 × Maximum Segment Lifetime (MSL), usually 2-4 minutes</p>
+                        <p><strong>Purpose 1:</strong> Ensures the final ACK is received by the passive closer</p>
+                        <p><strong>Purpose 2:</strong> Prevents old, duplicate packets from being accepted by new connections using the same 4-tuple (source/destination IP and ports)</p>
+                        <p><strong>Impact:</strong> Can cause port exhaustion on high-traffic servers; mitigation includes connection pooling and proper server configuration</p>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div>
+                    <h4 class="font-semibold text-slate-800 mb-3">3. How does TCP handle packet loss and ensure reliable delivery?</h4>
+                    <div class="bg-slate-50 p-6 rounded-lg">
+                      <div class="grid md:grid-cols-2 gap-6">
+                        <div>
+                          <h5 class="font-medium text-blue-600 mb-3">Mechanisms</h5>
+                          <ul class="text-sm text-slate-600 space-y-2">
+                            <li><strong>Sequence Numbers:</strong> Each byte has a sequence number for ordered reassembly</li>
+                            <li><strong>Acknowledgments:</strong> Receiver sends ACK for received packets</li>
+                            <li><strong>Retransmission:</strong> Sender retransmits unacknowledged packets</li>
+                            <li><strong>Timeout Calculation:</strong> Dynamic timeout based on RTT measurements</li>
+                          </ul>
+                        </div>
+                        <div>
+                          <h5 class="font-medium text-green-600 mb-3">Process</h5>
+                          <ol class="text-sm text-slate-600 space-y-2 list-decimal list-inside">
+                            <li>Sender transmits packet with sequence number</li>
+                            <li>Receiver sends ACK with next expected sequence number</li>
+                            <li>If ACK not received within timeout, sender retransmits</li>
+                            <li>Receiver discards duplicate packets but still ACKs them</li>
+                            <li>Fast retransmit triggers after 3 duplicate ACKs</li>
+                          </ol>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- HTTP and Application Layer -->
+              <div class="bg-white p-8 rounded-2xl shadow-sm border border-slate-200">
+                <h3 class="font-serif text-2xl font-semibold text-slate-800 mb-6">HTTP and Application Layer</h3>
+
+                <div class="space-y-8">
+                  <div>
+                    <h4 class="font-semibold text-slate-800 mb-3">1. What are the key differences between HTTP/1.1 and HTTP/2?</h4>
+                    <div class="bg-slate-50 p-6 rounded-lg">
+                      <div class="grid md:grid-cols-2 gap-6">
+                        <div>
+                          <h5 class="font-medium text-slate-800 mb-3">HTTP/1.1 Limitations</h5>
+                          <ul class="text-sm text-slate-600 space-y-2">
+                            <li>• Head-of-line blocking</li>
+                            <li>• Multiple TCP connections needed</li>
+                            <li>• Text-based protocol overhead</li>
+                            <li>• No header compression</li>
+                            <li>• Client must request all resources</li>
+                          </ul>
+                        </div>
+                        <div>
+                          <h5 class="font-medium text-slate-800 mb-3">HTTP/2 Improvements</h5>
+                          <ul class="text-sm text-slate-600 space-y-2">
+                            <li>• Multiplexing (multiple streams per connection)</li>
+                            <li>• HPACK header compression</li>
+                            <li>• Server push capability</li>
+                            <li>• Binary protocol for efficiency</li>
+                            <li>• Stream prioritization</li>
+                          </ul>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div>
+                    <h4 class="font-semibold text-slate-800 mb-3">2. What is HTTP Keep-Alive and why is it important?</h4>
+                    <div class="bg-slate-50 p-6 rounded-lg">
+                      <div class="space-y-4 text-sm text-slate-600">
+                        <p><strong>Definition:</strong> HTTP Keep-Alive (persistent connections) allows multiple HTTP requests/responses to be sent over a single TCP connection</p>
+                        <p><strong>Benefits:</strong></p>
+                        <ul class="ml-4 space-y-1">
+                          <li>• Reduces connection establishment overhead (TCP handshake)</li>
+                          <li>• Lower latency for subsequent requests</li>
+                          <li>• Better resource utilization</li>
+                          <li>• Improved performance for web pages with multiple resources</li>
+                        </ul>
+                        <p><strong>Configuration:</strong> Controlled by Connection: keep-alive header and timeout parameters</p>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div>
+                    <h4 class="font-semibold text-slate-800 mb-3">3. How does DNS work, and what are some common record types?</h4>
+                    <div class="bg-slate-50 p-6 rounded-lg">
+                      <div class="grid md:grid-cols-2 gap-6">
+                        <div>
+                          <h5 class="font-medium text-slate-800 mb-3">DNS Resolution Process</h5>
+                          <ol class="text-sm text-slate-600 space-y-2 list-decimal list-inside">
+                            <li>Browser checks local cache</li>
+                            <li>Query recursive resolver (ISP)</li>
+                            <li>Query root name servers</li>
+                            <li>Query TLD name servers</li>
+                            <li>Query authoritative name servers</li>
+                            <li>Cache result and return IP</li>
+                          </ol>
+                        </div>
+                        <div>
+                          <h5 class="font-medium text-slate-800 mb-3">Common Record Types</h5>
+                          <div class="space-y-2 text-sm text-slate-600">
+                            <div><strong>A:</strong> IPv4 address mapping</div>
+                            <div><strong>AAAA:</strong> IPv6 address mapping</div>
+                            <div><strong>CNAME:</strong> Canonical name (alias)</div>
+                            <div><strong>MX:</strong> Mail exchange servers</div>
+                            <div><strong>TXT:</strong> Text records (SPF, DKIM)</div>
+                            <div><strong>NS:</strong> Name server delegation</div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Load Balancing and Scaling -->
+              <div class="bg-white p-8 rounded-2xl shadow-sm border border-slate-200">
+                <h3 class="font-serif text-2xl font-semibold text-slate-800 mb-6">Load Balancing and Scaling</h3>
+
+                <div class="space-y-8">
+                  <div>
+                    <h4 class="font-semibold text-slate-800 mb-3">1. What is the difference between a Layer 4 and a Layer 7 load balancer?</h4>
+                    <div class="bg-slate-50 p-6 rounded-lg">
+                      <div class="grid md:grid-cols-2 gap-6">
+                        <div>
+                          <h5 class="font-medium text-blue-600 mb-3">Layer 4 (Transport)</h5>
+                          <ul class="text-sm text-slate-600 space-y-2">
+                            <li><strong>Operates at:</strong> Transport layer (TCP/UDP)</li>
+                            <li><strong>Decisions based on:</strong> IP addresses and ports</li>
+                            <li><strong>Speed:</strong> Very fast (no content inspection)</li>
+                            <li><strong>Features:</strong> Basic load distribution</li>
+                            <li><strong>Use cases:</strong> TCP/UDP traffic, databases</li>
+                          </ul>
+                        </div>
+                        <div>
+                          <h5 class="font-medium text-green-600 mb-3">Layer 7 (Application)</h5>
+                          <ul class="text-sm text-slate-600 space-y-2">
+                            <li><strong>Operates at:</strong> Application layer (HTTP)</li>
+                            <li><strong>Decisions based on:</strong> HTTP headers, URL, cookies</li>
+                            <li><strong>Speed:</strong> Slower (content inspection)</li>
+                            <li><strong>Features:</strong> SSL termination, content-based routing</li>
+                            <li><strong>Use cases:</strong> Web applications, API gateways</li>
+                          </ul>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div>
+                    <h4 class="font-semibold text-slate-800 mb-3">2. How does Round-Robin DNS work as a load balancing strategy?</h4>
+                    <div class="bg-slate-50 p-6 rounded-lg">
+                      <div class="space-y-4 text-sm text-slate-600">
+                        <p><strong>Process:</strong></p>
+                        <ol class="list-decimal list-inside ml-4 space-y-1">
+                          <li>Multiple A/AAAA records created for same domain</li>
+                          <li>Each record points to different server IP</li>
+                          <li>DNS server rotates order of IP addresses in responses</li>
+                          <li>Clients typically use first IP in the list</li>
+                        </ol>
+                        <p><strong>Advantages:</strong></p>
+                        <ul class="list-disc list-inside ml-4 space-y-1">
+                          <li>Simple to implement</li>
+                          <li>No additional hardware required</li>
+                          <li>Works with any DNS provider</li>
+                        </ul>
+                        <p><strong>Limitations:</strong></p>
+                        <ul class="list-disc list-inside ml-4 space-y-1">
+                          <li>No health checking (sends traffic to failed servers)</li>
+                          <li>No session persistence</li>
+                          <li>TTL caching can delay failover</li>
+                          <li>Can&#39;t account for server load or capacity</li>
+                        </ul>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div>
+                    <h4 class="font-semibold text-slate-800 mb-3">3. What are some challenges of managing state in a load-balanced environment?</h4>
+                    <div class="bg-slate-50 p-6 rounded-lg">
+                      <div class="space-y-4">
+                        <div>
+                          <h5 class="font-medium text-slate-800 mb-2">Challenges</h5>
+                          <ul class="text-sm text-slate-600 space-y-1">
+                            <li>• Session persistence (sticky sessions) required</li>
+                            <li>• Load distribution becomes uneven</li>
+                            <li>• Server failure leads to session loss</li>
+                            <li>• Scaling issues with session storage</li>
+                            <li>• Complexity in session replication</li>
+                          </ul>
+                        </div>
+                        <div>
+                          <h5 class="font-medium text-slate-800 mb-2">Solutions</h5>
+                          <ul class="text-sm text-slate-600 space-y-1">
+                            <li><strong>Sticky Sessions:</strong> Load balancer routes same client to same server</li>
+                            <li><strong>Session Replication:</strong> Copy session data across all servers</li>
+                            <li><strong>Centralized Session Store:</strong> Redis, Memcached, database</li>
+                            <li><strong>JWT Tokens:</strong> Stateless authentication with tokens</li>
+                            <li><strong>Database Sessions:</strong> Store session data in database</li>
+                          </ul>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Learning Resources Section -->
+      <section id="resources" class="section-spacing py-20 bg-white">
+        <div class="container mx-auto px-8">
+          <div class="max-w-4xl mx-auto">
+            <div class="text-center mb-16">
+              <h2 class="font-serif text-4xl font-semibold text-slate-800 mb-6">Free Learning Resources and Tools</h2>
+              <p class="text-xl text-slate-600 max-w-3xl mx-auto">
+                Curated collection of tutorials, tools, and references to deepen your networking knowledge
+              </p>
+            </div>
+
+            <div class="grid lg:grid-cols-2 gap-8 mb-16">
+              <!-- Foundational Tutorials -->
+              <div class="bg-slate-50 p-8 rounded-2xl">
+                <h3 class="font-serif text-xl font-semibold text-slate-800 mb-6 flex items-center">
+                  <i class="fas fa-book text-blue-500 mr-3"></i>
+                  Foundational Tutorials
+                </h3>
+
+                <div class="space-y-4">
+                  <div class="bg-white p-4 rounded-lg border border-slate-200">
+                    <h4 class="font-semibold text-slate-800 mb-2">&#34;Networking for Backend Engineers&#34; Series</h4>
+                    <p class="text-sm text-slate-600 mb-2">Comprehensive overview of networking concepts tailored for backend engineers</p>
+                    <span class="text-xs text-blue-600 font-medium">Javaad Patel</span>
+                  </div>
+
+                  <div class="bg-white p-4 rounded-lg border border-slate-200">
+                    <h4 class="font-semibold text-slate-800 mb-2">&#34;How DNS Works&#34;</h4>
+                    <p class="text-sm text-slate-600 mb-2">Clear explanation of DNS resolution, record types, and security implications</p>
+                    <span class="text-xs text-blue-600 font-medium">Cloudflare Learning Center</span>
+                  </div>
+
+                  <div class="bg-white p-4 rounded-lg border border-slate-200">
+                    <h4 class="font-semibold text-slate-800 mb-2">&#34;Demystifying Networking for Backend Developers&#34;</h4>
+                    <p class="text-sm text-slate-600 mb-2">High-level overview with practical applications and real-world scenarios</p>
+                    <span class="text-xs text-blue-600 font-medium">Medium</span>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Practical Python Guides -->
+              <div class="bg-slate-50 p-8 rounded-2xl">
+                <h3 class="font-serif text-xl font-semibold text-slate-800 mb-6 flex items-center">
+                  <i class="fas fa-code text-green-500 mr-3"></i>
+                  Practical Python Guides
+                </h3>
+
+                <div class="space-y-4">
+                  <div class="bg-white p-4 rounded-lg border border-slate-200">
+                    <h4 class="font-semibold text-slate-800 mb-2">Real Python: requests Library Tutorial</h4>
+                    <p class="text-sm text-slate-600 mb-2">Comprehensive guide to HTTP requests, authentication, sessions, and error handling</p>
+                    <span class="text-xs text-green-600 font-medium">Real Python</span>
+                  </div>
+
+                  <div class="bg-white p-4 rounded-lg border border-slate-200">
+                    <h4 class="font-semibold text-slate-800 mb-2">DigitalOcean: Python http.server Tutorial</h4>
+                    <p class="text-sm text-slate-600 mb-2">Step-by-step guide to building HTTP servers and handling different methods</p>
+                    <span class="text-xs text-green-600 font-medium">DigitalOcean</span>
+                  </div>
+
+                  <div class="bg-white p-4 rounded-lg border border-slate-200">
+                    <h4 class="font-semibold text-slate-800 mb-2">GeeksForGeeks: Socket Programming in Python</h4>
+                    <p class="text-sm text-slate-600 mb-2">Detailed introduction to TCP/UDP servers, clients, and connection handling</p>
+                    <span class="text-xs text-green-600 font-medium">GeeksForGeeks</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Analysis and Simulation Tools -->
+            <div class="bg-slate-50 p-8 rounded-2xl mb-16">
+              <h3 class="font-serif text-xl font-semibold text-slate-800 mb-6 flex items-center">
+                <i class="fas fa-tools text-purple-500 mr-3"></i>
+                Analysis and Simulation Tools
+              </h3>
+
+              <div class="grid md:grid-cols-3 gap-6">
+                <div class="bg-white p-6 rounded-xl border border-slate-200 text-center">
+                  <div class="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <i class="fas fa-search text-blue-600 text-xl"></i>
+                  </div>
+                  <h4 class="font-semibold text-slate-800 mb-3">Wireshark</h4>
+                  <p class="text-sm text-slate-600 mb-3">Powerful network protocol analyzer for packet inspection</p>
+                  <span class="text-xs text-blue-600 font-medium">Packet Analysis</span>
+                </div>
+
+                <div class="bg-white p-6 rounded-xl border border-slate-200 text-center">
+                  <div class="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <i class="fas fa-cube text-green-600 text-xl"></i>
+                  </div>
+                  <h4 class="font-semibold text-slate-800 mb-3">Scapy</h4>
+                  <p class="text-sm text-slate-600 mb-3">Python library for packet crafting and manipulation</p>
+                  <span class="text-xs text-green-600 font-medium">Packet Crafting</span>
+                </div>
+
+                <div class="bg-white p-6 rounded-xl border border-slate-200 text-center">
+                  <div class="w-16 h-16 bg-purple-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <i class="fas fa-satellite-dish text-purple-600 text-xl"></i>
+                  </div>
+                  <h4 class="font-semibold text-slate-800 mb-3">icmplib</h4>
+                  <p class="text-sm text-slate-600 mb-3">Python library for ICMP operations and diagnostics</p>
+                  <span class="text-xs text-purple-600 font-medium">ICMP Library</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Video Resources -->
+            <div class="bg-white p-8 rounded-2xl shadow-sm border border-slate-200">
+              <h3 class="font-serif text-xl font-semibold text-slate-800 mb-6 flex items-center">
+                <i class="fas fa-video text-red-500 mr-3"></i>
+                Video Resources
+              </h3>
+
+              <div class="grid md:grid-cols-2 gap-8">
+                <div>
+                  <h4 class="font-semibold text-slate-800 mb-4">YouTube Channels</h4>
+                  <div class="space-y-4">
+                    <div class="flex items-start space-x-3">
+                      <div class="w-10 h-10 bg-red-100 rounded-lg flex items-center justify-center">
+                        <i class="fab fa-youtube text-red-600"></i>
+                      </div>
+                      <div>
+                        <h5 class="font-medium text-slate-800">Computerphile</h5>
+                        <p class="text-sm text-slate-600">Computer science experts from University of Nottingham</p>
+                      </div>
+                    </div>
+                    <div class="flex items-start space-x-3">
+                      <div class="w-10 h-10 bg-red-100 rounded-lg flex items-center justify-center">
+                        <i class="fab fa-youtube text-red-600"></i>
+                      </div>
+                      <div>
+                        <h5 class="font-medium text-slate-800">NetworkChuck</h5>
+                        <p class="text-sm text-slate-600">Practical tutorials and networking explanations</p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <div>
+                  <h4 class="font-semibold text-slate-800 mb-4">University Course Lectures</h4>
+                  <div class="space-y-4">
+                    <div class="flex items-start space-x-3">
+                      <div class="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center">
+                        <i class="fas fa-graduation-cap text-blue-600"></i>
+                      </div>
+                      <div>
+                        <h5 class="font-medium text-slate-800">Stanford University</h5>
+                        <p class="text-sm text-slate-600">OpenCourseWare networking courses</p>
+                      </div>
+                    </div>
+                    <div class="flex items-start space-x-3">
+                      <div class="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center">
+                        <i class="fas fa-graduation-cap text-blue-600"></i>
+                      </div>
+                      <div>
+                        <h5 class="font-medium text-slate-800">MIT OpenCourseWare</h5>
+                        <p class="text-sm text-slate-600">Free online computer networking courses</p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Footer -->
+      <footer class="bg-slate-800 text-slate-300 py-12">
+        <div class="container mx-auto px-8">
+          <div class="max-w-4xl mx-auto text-center">
+            <h3 class="font-serif text-2xl font-semibold text-white mb-4">The Backend Engineer&#39;s Guide to Networking</h3>
+            <p class="text-slate-400 mb-8">
+              Master the fundamentals of networking for building scalable, secure, and reliable backend applications
+            </p>
+
+            <div class="grid md:grid-cols-3 gap-8 mb-8">
+              <div>
+                <h4 class="font-semibold text-white mb-3">Key Topics</h4>
+                <ul class="text-sm space-y-1">
+                  <li>TCP/IP &amp; OSI Models</li>
+                  <li>HTTP/HTTPS Protocols</li>
+                  <li>DNS Resolution</li>
+                  <li>Load Balancing</li>
+                </ul>
+              </div>
+              <div>
+                <h4 class="font-semibold text-white mb-3">Practical Skills</h4>
+                <ul class="text-sm space-y-1">
+                  <li>Socket Programming</li>
+                  <li>Network Diagnostics</li>
+                  <li>Security Implementation</li>
+                  <li>Performance Optimization</li>
+                </ul>
+              </div>
+              <div>
+                <h4 class="font-semibold text-white mb-3">Resources</h4>
+                <ul class="text-sm space-y-1">
+                  <li>Python Examples</li>
+                  <li>Interview Questions</li>
+                  <li>Learning Materials</li>
+                  <li>Tools &amp; References</li>
+                </ul>
+              </div>
+            </div>
+
+            <div class="border-t border-slate-700 pt-8">
+              <p class="text-sm text-slate-500">
+                This guide provides a comprehensive foundation for backend engineers to understand and implement networking concepts in real-world applications.
+              </p>
+            </div>
+          </div>
+        </div>
+      </footer>
+    </code></main><code>
+
+    <script>
+        // Initialize Mermaid
+        mermaid.initialize({ 
+            startOnLoad: true,
+            theme: 'default',
+            themeVariables: {
+                primaryColor: '#ffffff',
+                primaryTextColor: '#1f2937',
+                primaryBorderColor: '#374151',
+                lineColor: '#4b5563',
+                secondaryColor: '#f8fafc',
+                tertiaryColor: '#f1f5f9',
+                background: '#ffffff',
+                mainBkg: '#ffffff',
+                secondBkg: '#f8fafc',
+                tertiaryBkg: '#f1f5f9',
+                // Enhanced contrast colors for different node types
+                cScale0: '#fef3c7',
+                cScale1: '#dbeafe', 
+                cScale2: '#d1fae5',
+                cScale3: '#fce7f3',
+                cScale4: '#e0e7ff',
+                cScale5: '#f3e8ff',
+                cScale6: '#fed7d7',
+                cScale7: '#fed7d7',
+                // Text colors for better contrast
+                cScaleLabel0: '#1f2937',
+                cScaleLabel1: '#1f2937',
+                cScaleLabel2: '#1f2937',
+                cScaleLabel3: '#1f2937',
+                cScaleLabel4: '#1f2937',
+                cScaleLabel5: '#1f2937',
+                cScaleLabel6: '#1f2937',
+                cScaleLabel7: '#1f2937'
+            },
+            flowchart: {
+                useMaxWidth: false,
+                htmlLabels: true,
+                curve: 'basis',
+                padding: 20
+            },
+            sequence: {
+                useMaxWidth: false,
+                wrap: true,
+                padding: 20
+            },
+            gantt: {
+                useMaxWidth: false,
+                padding: 20
+            }
+        });
+
+        // Initialize Mermaid Controls for zoom and pan
+        function initializeMermaidControls() {
+            const containers = document.querySelectorAll('.mermaid-container');
+
+            containers.forEach(container => {
+            const mermaidElement = container.querySelector('.mermaid');
+            let scale = 1;
+            let isDragging = false;
+            let startX, startY, translateX = 0, translateY = 0;
+
+            // 触摸相关状态
+            let isTouch = false;
+            let touchStartTime = 0;
+            let initialDistance = 0;
+            let initialScale = 1;
+            let isPinching = false;
+
+            // Zoom controls
+            const zoomInBtn = container.querySelector('.zoom-in');
+            const zoomOutBtn = container.querySelector('.zoom-out');
+            const resetBtn = container.querySelector('.reset-zoom');
+            const fullscreenBtn = container.querySelector('.fullscreen');
+
+            function updateTransform() {
+                mermaidElement.style.transform = `translate(${translateX}px, ${translateY}px) scale(${scale})`;
+
+                if (scale > 1) {
+                container.classList.add('zoomed');
+                } else {
+                container.classList.remove('zoomed');
+                }
+
+                mermaidElement.style.cursor = isDragging ? 'grabbing' : 'grab';
+            }
+
+            if (zoomInBtn) {
+                zoomInBtn.addEventListener('click', () => {
+                scale = Math.min(scale * 1.25, 4);
+                updateTransform();
+                });
+            }
+
+            if (zoomOutBtn) {
+                zoomOutBtn.addEventListener('click', () => {
+                scale = Math.max(scale / 1.25, 0.3);
+                if (scale <= 1) {
+                    translateX = 0;
+                    translateY = 0;
+                }
+                updateTransform();
+                });
+            }
+
+            if (resetBtn) {
+                resetBtn.addEventListener('click', () => {
+                scale = 1;
+                translateX = 0;
+                translateY = 0;
+                updateTransform();
+                });
+            }
+
+            if (fullscreenBtn) {
+                fullscreenBtn.addEventListener('click', () => {
+                if (container.requestFullscreen) {
+                    container.requestFullscreen();
+                } else if (container.webkitRequestFullscreen) {
+                    container.webkitRequestFullscreen();
+                } else if (container.msRequestFullscreen) {
+                    container.msRequestFullscreen();
+                }
+                });
+            }
+
+            // Mouse Events
+            mermaidElement.addEventListener('mousedown', (e) => {
+                if (isTouch) return; // 如果是触摸设备，忽略鼠标事件
+
+                isDragging = true;
+                startX = e.clientX - translateX;
+                startY = e.clientY - translateY;
+                mermaidElement.style.cursor = 'grabbing';
+                updateTransform();
+                e.preventDefault();
+            });
+
+            document.addEventListener('mousemove', (e) => {
+                if (isDragging && !isTouch) {
+                translateX = e.clientX - startX;
+                translateY = e.clientY - startY;
+                updateTransform();
+                }
+            });
+
+            document.addEventListener('mouseup', () => {
+                if (isDragging && !isTouch) {
+                isDragging = false;
+                mermaidElement.style.cursor = 'grab';
+                updateTransform();
+                }
+            });
+
+            document.addEventListener('mouseleave', () => {
+                if (isDragging && !isTouch) {
+                isDragging = false;
+                mermaidElement.style.cursor = 'grab';
+                updateTransform();
+                }
+            });
+
+            // 获取两点之间的距离
+            function getTouchDistance(touch1, touch2) {
+                return Math.hypot(
+                touch2.clientX - touch1.clientX,
+                touch2.clientY - touch1.clientY
+                );
+            }
+
+            // Touch Events - 触摸事件处理
+            mermaidElement.addEventListener('touchstart', (e) => {
+                isTouch = true;
+                touchStartTime = Date.now();
+
+                if (e.touches.length === 1) {
+                // 单指拖动
+                isPinching = false;
+                isDragging = true;
+
+                const touch = e.touches[0];
+                startX = touch.clientX - translateX;
+                startY = touch.clientY - translateY;
+
+                } else if (e.touches.length === 2) {
+                // 双指缩放
+                isPinching = true;
+                isDragging = false;
+
+                const touch1 = e.touches[0];
+                const touch2 = e.touches[1];
+                initialDistance = getTouchDistance(touch1, touch2);
+                initialScale = scale;
+                }
+
+                e.preventDefault();
+            }, { passive: false });
+
+            mermaidElement.addEventListener('touchmove', (e) => {
+                if (e.touches.length === 1 && isDragging && !isPinching) {
+                // 单指拖动
+                const touch = e.touches[0];
+                translateX = touch.clientX - startX;
+                translateY = touch.clientY - startY;
+                updateTransform();
+
+                } else if (e.touches.length === 2 && isPinching) {
+                // 双指缩放
+                const touch1 = e.touches[0];
+                const touch2 = e.touches[1];
+                const currentDistance = getTouchDistance(touch1, touch2);
+
+                if (initialDistance > 0) {
+                    const newScale = Math.min(Math.max(
+                    initialScale * (currentDistance / initialDistance),
+                    0.3
+                    ), 4);
+                    scale = newScale;
+                    updateTransform();
+                }
+                }
+
+                e.preventDefault();
+            }, { passive: false });
+
+            mermaidElement.addEventListener('touchend', (e) => {
+                // 重置状态
+                if (e.touches.length === 0) {
+                isDragging = false;
+                isPinching = false;
+                initialDistance = 0;
+
+                // 延迟重置isTouch，避免鼠标事件立即触发
+                setTimeout(() => {
+                    isTouch = false;
+                }, 100);
+                } else if (e.touches.length === 1 && isPinching) {
+                // 从双指变为单指，切换为拖动模式
+                isPinching = false;
+                isDragging = true;
+
+                const touch = e.touches[0];
+                startX = touch.clientX - translateX;
+                startY = touch.clientY - translateY;
+                }
+
+                updateTransform();
+            });
+
+            mermaidElement.addEventListener('touchcancel', (e) => {
+                isDragging = false;
+                isPinching = false;
+                initialDistance = 0;
+
+                setTimeout(() => {
+                isTouch = false;
+                }, 100);
+
+                updateTransform();
+            });
+
+            // Enhanced wheel zoom with better center point handling
+            container.addEventListener('wheel', (e) => {
+                e.preventDefault();
+                const rect = container.getBoundingClientRect();
+                const centerX = rect.width / 2;
+                const centerY = rect.height / 2;
+
+                const delta = e.deltaY > 0 ? 0.9 : 1.1;
+                const newScale = Math.min(Math.max(scale * delta, 0.3), 4);
+
+                // Adjust translation to zoom towards center
+                if (newScale !== scale) {
+                const scaleDiff = newScale / scale;
+                translateX = translateX * scaleDiff;
+                translateY = translateY * scaleDiff;
+                scale = newScale;
+
+                if (scale <= 1) {
+                    translateX = 0;
+                    translateY = 0;
+                }
+
+                updateTransform();
+                }
+            });
+
+            // Initialize display
+            updateTransform();
+            });
+        }
+
+        // Call the function after DOM is loaded
+        document.addEventListener('DOMContentLoaded', function() {
+            initializeMermaidControls();
+        });
+
+        // Smooth scrolling for anchor links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+
+        // Highlight active section in TOC
+        const observerOptions = {
+            rootMargin: '-20% 0px -70% 0px',
+            threshold: 0
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                const id = entry.target.getAttribute('id');
+                const tocLink = document.querySelector(`a[href="#${id}"]`);
+                
+                if (entry.isIntersecting) {
+                    // Remove active class from all links
+                    document.querySelectorAll('.toc-fixed a').forEach(link => {
+                        link.classList.remove('bg-blue-100', 'text-blue-700', 'font-medium');
+                        link.classList.add('text-slate-600');
+                    });
+                    
+                    // Add active class to current link
+                    if (tocLink) {
+                        tocLink.classList.remove('text-slate-600');
+                        tocLink.classList.add('bg-blue-100', 'text-blue-700', 'font-medium');
+                    }
+                }
+            });
+        }, observerOptions);
+
+        // Observe all sections
+        document.querySelectorAll('section[id]').forEach(section => {
+            observer.observe(section);
+        });
+    </script>
+  
+
+</code></body></html>

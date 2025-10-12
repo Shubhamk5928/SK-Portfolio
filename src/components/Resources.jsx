@@ -142,6 +142,18 @@ const Resources = () => {
       link: "/resources/javanotesfordsa.html",
       icon: "☕",
     },
+    {
+      title: "Network Fundamentals for Backend Engineers",
+      description: "Learn core networking concepts like DNS, IP, HTTP, TCP/UDP, load balancing, and how backend systems communicate securely and efficiently over the internet.",
+      tags: [
+        { name: "Networking", color: "text-blue-400" },
+        { name: "Backend", color: "text-green-400" },
+        { name: "HTTP", color: "text-yellow-400" },
+        { name: "DNS", color: "text-purple-400" },
+      ],
+      link: "/resources/networkfundamentalsforbackendengineer.html",
+      icon: "🌐",
+    },    
   ];
 
   return (
